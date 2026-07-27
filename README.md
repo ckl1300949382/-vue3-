@@ -1,44 +1,208 @@
-# mytestproject
+# 用户管理系统
 
-This template should help get you started developing with Vue 3 in Vite.
+包含技术栈：Vue3、Router、Pinia、Element Plus、Axios、Express
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 项目现状
 
-## Recommended Browser Setup
+| 模块 | 内容 | 状态 |
+|------|------|------|
+| **登录** | 表单校验、调接口、存 token、跳转 | ✅ 完成 |
+| **注册** | 表单校验（用户名/密码/确认密码/邮箱/姓名）、调接口 | ✅ 完成 |
+| **用户管理 CRUD** | 增删改查 + 搜索 + 弹窗共用表单 | ✅ 完成 |
+| **管理员权限** | 标签页隐藏 + 路由守卫拦截 | ✅ 完成 |
+| **全局状态** | Pinia 存储登录状态/token/用户信息 | ✅ 完成 |
+| **面包屑导航** | 根据路由动态显示 | ✅ 完成 |
+| **Express 后端** | 模拟数据、JWT、完整 CRUD API | ✅ 完成 |
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Customize configuration
+## 前期配置
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Pinia** — 从 `vue` 中引入 `defineStore`，在 `src/store/` 下创建 `useLoginUserStore.js`，用来管理登录状态、token、用户信息
+- **Element Plus** — 在 `main.js` 中全局导入 Element Plus 和样式文件
+- **后端请求封装** — 在 `src/reques.ts` 中使用 `axios.create()` 创建一个实例，设置好 baseURL 为 `http://localhost:3001`，并配置请求拦截器和响应拦截器
+- **路由设置** — 在 `src/router/index.js` 中配置了 4 个路由：首页 `/`、用户登录 `/user/login`、用户注册 `/user/register`、用户管理 `/user/userManage`
 
-## Project Setup
+---
 
-```sh
-npm install
-```
+## 功能实现
 
-### Compile and Hot-Reload for Development
+1.Tab 栏的实现
 
-```sh
-npm run dev
-```
+1.引入路由 route 和 router
+2.
 
-### Compile and Minify for Production
+### 1. 用户登录功能
 
-```sh
-npm run build
-```
+1. 在 `api/user.js` 中编写 `userLogin` 方法，调用后端的 `POST /api/login` 接口
+   使用方式：在获取数据加载的时候可以利用element中的loading，在完成引入数据前设置为false，引入完成后设置为true。这样在网络不好的时候就会出现动画表示在加载中。
+2. 在 `Login.vue` 中引入 `userLogin`，并引入 `useUserStore` 用于存储登录后的用户状态
+3. 创建一个 `loginForm` 响应式对象（包含 username、password），用 `v-model` 双向绑定表单输入
+4. 绑定登录按钮的点击事件 `handleLogin`。首先判断用户名和密码是否为空，如果为空则使用 Element Plus 的 `ElMessage.error` 弹出提示，然后 `return` 终止
+5. 验证通过后调用 `const res = await userLogin({username, password})` 将数据传到后端
+6. 判断 `res.data.code === 200`：
+   - 成功 → `ElMessage.success('登录成功')` → 调用 `userStore.login(res.data.data.token, res.data.data.user)` 将 token 和用户信息保存到 localStorage → `router.push('/')` 跳转回首页
+   - 失败 → 区分两种情况："用户名或密码错误"（后端返回 401）和"网络请求错误"（网络不通等）
 
-### Lint with [ESLint](https://eslint.org/)
+功能：
+1.判断登录是否为管理员
+  1.1 首先在页面端的"用户管理"中增加IF判断。在登录且为管理员的role的条件下显示"用户管理"
+  1.2 在router路径下设置路由守卫。（router.beforeEach）获取userInfo后判断是否为管理员。如果是就next放行。如果不是就使用next("/")返回到主页去。
+2.用户名和密码的校验
+  在输入用户名和密码出绑定事件input。之后在该函数下获取用户输入的值，对用户输入的值进行判断。在提交的按钮函数下设计条件判断
 
-```sh
-npm run lint
-```
+#### 已完成
+- 用户名输入框过滤中文和特殊字符（仅允许英文、数字、下划线）
+- 密码输入框下方有长度提示（6-20个字符）
+- 登录页支持按 Enter 键提交
+
+---
+
+### 2. 用户注册功能
+
+1. 在 `api/user.js` 中编写 `userRegister` 方法，调用后端的 `POST /api/register` 接口
+2. 在 `Register.vue` 中通过 import 引入 `userRegister`
+3. 创建一个 `registerForm` 响应式对象来承接用户输入的数据，包含属性：`username`、`password`、`confirmPassword`、`email`、`name`
+4. 注册前先判断 `password` 和 `confirmPassword` 两个值是否一致，如果不一致则提示"两次输入的密码不一致"并 `return`
+5. 验证通过后调 `const res = await userRegister({username, password, email, name})`，将用户输入的数据传到后端
+6. 判断 `res.data.code === 200`：
+   - 成功 → `ElMessage.success('注册成功')` → `router.push('/user/login')` 跳转到登录页
+   - 失败 → `ElMessage.error('注册失败')`
+
+
+#### 还需要完成或者完善的功能
+- 密码需要有什么特殊符号（复杂度要求）
+
+---
+
+### 3. 用户管理（增删改查）
+
+共用部分（增和改用的是同一个弹窗 + 同一个表单 `formLabelAlign`）：
+- 表单字段包含：`username`、`name`、`email`、`password`、`role`、`status`
+  - `role` 的默认值为 `'user'`，通过 `<el-select>` 下拉框选择"管理员"或"普通用户"
+  - `status` 的默认值为 `1`，通过 `<el-select>` 下拉框选择"正常"或"禁用"
+- 弹窗使用 `v-model="dialogVisible"` 控制显示隐藏，默认 `false`
+- 弹窗标题根据 `isEditMode` 动态显示"增加用户"或"编辑用户"
+- 提交按钮统一调用 `handleSubmit` 函数，函数里先检查各字段是否为空
+- 提交成功后：`ElMessage` 提示 → 调 `getManageData()` 刷新列表 → `dialogVisible.value = false` 关弹窗 → 重置表单数据
+
+---
+
+#### 查（展示列表 + 搜索）
+
+1. 页面加载时通过 `onMounted` 自动调用 `getManageData()` 获取用户列表，数据绑到 `<el-table>` 表格中展示
+2. 表格包含列：ID、用户名、姓名、邮箱、角色（用 `<el-tag>` 显示管理员/普通用户）、状态（用 `<el-tag>` 显示正常/禁用）、注册时间、操作
+3. 搜索：在搜索框输入关键词，点击搜索按钮调用 `getManageData(keyword)` 把关键词传到后端
+4. 后端 `GET /api/users?keyword=xxx` 根据关键词模糊匹配用户名、姓名、邮箱，返回过滤后的数据刷新表格
+5. 表格自带 `v-loading` 效果，请求数据时显示加载动画
+
+分页功能的实现
+1.从后端调用数据时，需要在URL中添加分页参数（params中增加page和pageSize参数）。例如：`/api/users?page=1&pageSize=10`
+2. 前端需要在表格中展示当前页码和总页数（在前端页面中设置变量currentPage和totalPage），以及每页显示的用户数量。
+3. 在element-plus中找一个合适的组件`<el-pagination>`，将其放在表格的下方。
+4. 根据element-plus的文档，设置分页组件的属性。
+   - `total`：总记录数，从后端获取。
+   - `current-page`：当前页码，从前端页面中设置变量currentPage获取。
+   - `page-size`：每页显示数量，从前端页面中设置变量pageSize获取。
+   - `@current-change`：点击分页组件的"当前页码"选项，会触发 `getManageData` 函数，获取新的数据。
+5. 分页组件的"每页显示数量"选项，会触发 `getManageData` 函数，获取新的数据。
+6. 分页组件的"当前页码"选项，会触发 `getManageData` 函数，获取新的数据。
+
+#### 增
+
+1. 点击"增加用户"按钮 → 调用 `handleAdd`
+2. `handleAdd` 把 `isEditMode` 设为 `false`，重置 `formLabelAlign` 到初始值，打开弹窗
+3. 管理员填写表单（用户名、姓名、邮箱、密码、角色、状态）
+4. 点击"提交" → 调用 `handleSubmit`
+5. `handleSubmit` 先验证：用户名、姓名、邮箱、密码不能为空（密码只在新增时必填）
+6. 验证通过后调 `await addUser({username, name, email, password})` 传到后端
+7. 判断返回：`code === 200` → 提示"添加成功" → 刷新列表 → 关弹窗 → 重置表单
+
+#### 删
+
+1. 点击表格中某一行的"删除"按钮 → 调用 `handleDelete(row.id)`
+2. 弹出 `ElMessageBox.confirm` 确认框，显示"确认删除该用户？"
+3. 点击"确定" → 调 `await deleteUser(id)` 调后端 `DELETE /api/users/:id` 接口
+4. 判断返回：`code === 200` → `ElMessage.success('删除')` → 刷新列表
+
+#### 改
+
+跟增共用了上面说的弹窗和 `handleSubmit` 提交函数。区别在于：
+1. 点击表格中某一行的"编辑"按钮 → 调用 `handleEdit(row)`
+2. `handleEdit` 把 `isEditMode` 设为 `true`，存下 `editId = row.id`
+3. 把该行数据回填到 `formLabelAlign` 中（密码留空，让管理员决定是否修改）
+4. 打开弹窗，标题显示"编辑用户"
+5. 提交时 `handleSubmit` 判断 `isEditMode`：
+   - 编辑模式 → 调 `await updateUser(editId, {name, email, role, status})`（PUT 方法，用户名和密码不改）
+   - 新增模式 → 调 `await addUser({...})`（POST 方法）
+6. 判断返回：`code === 200` → 提示"更新成功" → 刷新列表 → 关弹窗 → 重置表单
+
+---
+
+4. 用户个人中心
+
+用户登录后，点击"个人中心"按钮，跳转到 `/user/center` 页面，展示个人信息和操作按钮。
+1. 从api调用 `GET /api/users/:id` 接口，获取当前登录用户的个人信息。
+2. 创建表单放置从后端传过来的个人信息，包括用户名、姓名、邮箱、角色、状态。
+3.
+
+---
+
+## 全局功能
+
+### 退出登录
+
+1. 点击"退出"按钮 → 调用 `handleLogout`
+2. `handleLogout` 调用 `userStore.logout()` 清除 token 和用户信息
+3. 退出后自动跳转回首页
+
+---
+
+## 一些学习到的心得
+
+1.可以使用@keyup.enter="handleLogin"来绑定键盘上的按键，实现按键盘就能执行一些业务。
+2.简单的项目，可以通过三元运算符来实现简单的判断，例如：`{{ FormLabelAlign.status === 1 ? '正常' : '禁用' }}`，但是在复杂的项目中可以使用定义的函数来实现更复杂的判断。
+3. Pinia 的 useStore() 必须在 Pinia 实例初始化完成后才能调用
+4. 在 Vue3 的 <script setup> 中，模块顶层的代码会在组件创建时立即执行
+5. onMounted 钩子中的代码会在组件挂载后执行，此时所有插件都已初始化完成
+6. 路由守卫中的代码会在每次路由切换时执行，此时 Pinia 已经初始化完成
+
+---
+
+## 待解决的问题
+
+### 页面 UI
+- 整体的页面设计太难看了，页脚没有添加东西进去
+- 页面布局和样式还需要打磨（放到最后处理）
+
+### 注册功能
+- 密码复杂度要求（需要有什么特殊符号）
+
+### 代码小问题
+- `src/reques.ts` 文件名拼写错误（应是 `request`）
+- `login.vue` 和 `Register.vue` 文件名大小写不一致
+- `src/layout/basclayout.vue` 命名不规范（建议 `BaseLayout.vue`）
+- axios 请求拦截器没有注入 token，登录后的请求不会自动带上认证信息
+- `src/stores/counter.js` 是脚手架生成的示例代码，目前未使用，可以删除
+
+---
+
+## 建议的下一个业务功能（按实用性和学习价值排列）
+
+### 1. 🔄 分页功能（用户管理表格）
+后端 `GET /api/users` 已经支持 `page` 和 `pageSize` 参数，但前端表格一次性全加载。用户多了会卡。
+→ 学会用 Element Plus `<el-pagination>` 组件，配合分页请求
+
+### 2. 👤 用户个人中心
+现在只有管理员能去管理页改用户，普通用户自己没地方看/改个人信息。
+→ 新建 `/user/profile` 页面，显示个人信息，可编辑姓名/邮箱
+
+### 3. 🔑 修改密码
+登录后用户可以自己改密码。
+→ 需要输入旧密码 + 新密码 + 确认新密码，调后端新接口
+
+### 4. 📊 首页数据动态化
+首页统计卡片的"用户总数/活跃用户/管理员"现在是写死的数字。
+→ 加一个后端统计接口 `GET /api/stats`，前端调接口展示真实数据
