@@ -9,13 +9,11 @@ const route = useRoute()
 const userStore = useUserStore()
 const goLogin = () => {
   router.push('/user/login')
-  console.log('完成登录');
-
 }
 // 退出登录：调用 Pinia Store 的 logout 方法
 const handleLogout = () => {
   userStore.logout()
-  if (router.path === '/') return
+  if (route.path === '/') return
   router.push('/') //当用户在首页的时候就不会执行跳转了
 }
 
@@ -34,8 +32,6 @@ const routeMap = {
 // 点击标签切换路由
 const handleClick = (tab) => {
   activeName.value = tab.props.name
-  console.log(routeMap[tab.name]);
-  console.log(tab);
   router.push(routeMap[tab.props.name] || '/')
 }
 

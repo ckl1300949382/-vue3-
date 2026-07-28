@@ -1,3 +1,31 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { getStats } from '@/api/user'
+
+const stats = ref({})
+const loading = ref(false)
+
+const getdata = async () => {
+  loading.value = true
+  try {
+    const res = await getStats()
+    if (res.code === 200) {
+      stats.value = res.data
+    } else {
+      ElMessage.error(res.message || '获取统计数据失败')
+    }
+  } catch (err) {
+    ElMessage.error('获取统计数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+onMounted(() => {
+  getdata()
+})
+</script>
+
 <template>
   <div class="home">
     <!-- ===== 顶部欢迎区 ===== -->
@@ -18,28 +46,28 @@
       <div class="stat-card">
         <div class="stat-icon stat-icon-users">👤</div>
         <div class="stat-body">
-          <span class="stat-num">5</span>
+          <span class="stat-num">{{ stats?.total || 0 }}</span>
           <span class="stat-label">用户总数</span>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon stat-icon-active">✅</div>
         <div class="stat-body">
-          <span class="stat-num">4</span>
+          <span class="stat-num">{{ stats?.active || 0 }}</span>
           <span class="stat-label">活跃用户</span>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon stat-icon-admin">🛡️</div>
         <div class="stat-body">
-          <span class="stat-num">1</span>
+          <span class="stat-num">{{ stats?.admin || 0 }}</span>
           <span class="stat-label">管理员</span>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon stat-icon-year">📅</div>
         <div class="stat-body">
-          <span class="stat-num">2026</span>
+          <span class="stat-num">{{ stats?.year || 0 }}</span>
           <span class="stat-label">系统年份</span>
         </div>
       </div>

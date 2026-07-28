@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 const route = useRoute()
+
 </script>
 
 
@@ -15,7 +16,7 @@ const route = useRoute()
       <Breadcrumb />
       <router-view :key="route.fullPath"></router-view>
     </el-main>
-    <el-footer class="el-footer">Footer</el-footer>
+    <el-footer class="el-footer">全局管理系统 © 2026</el-footer>
   </el-container>
 </template>
 

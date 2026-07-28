@@ -74,3 +74,10 @@ export const changePassword = async (id, { oldPassword, newPassword }) => {
     data: { oldPassword, newPassword }
   })
 }
+
+export const getStats = async () => {
+  return await instance.request({
+    url: '/api/stats',
+    method: 'get'
+  })
+}

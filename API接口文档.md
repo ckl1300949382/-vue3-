@@ -20,6 +20,7 @@
   - [7. 更新用户信息](#7-更新用户信息)
   - [8. 修改密码](#8-修改密码)
 - [后端额外接口](#后端额外接口---change-password)
+- [9. 获取首页统计数据](#9-获取首页统计数据)
 - [前端封装速查表](#前端封装速查表)
 - [错误码汇总](#错误码汇总)
 - [axios 配置与改进建议](#axios-配置与改进建议)
@@ -575,6 +576,51 @@ if (res.data.code === 200) {
 
 ---
 
+### 9. 获取首页统计数据
+
+- **方法**: `GET`
+- **URL**: `/api/stats`
+- **前端函数**: `getStats()`
+- **功能**: 获取首页展示的统计数据（用户总数、活跃用户数、管理员数等）
+
+#### 成功响应 (200)
+
+```json
+{
+  "code": 200,
+  "message": "获取成功",
+  "data": {
+    "total": 15,
+    "active": 12,
+    "admin": 1,
+    "year": 2026
+  }
+}
+```
+
+#### 响应字段说明
+
+| 字段名   | 类型   | 说明                         |
+| -------- | ------ | ---------------------------- |
+| `total`  | number | 用户总数                     |
+| `active` | number | 正常状态用户数（status === 1） |
+| `admin`  | number | 管理员用户数（role === 'admin'） |
+| `year`   | number | 当前年份                     |
+
+#### 前端调用示例
+
+```js
+import { getStats } from '@/api/user'
+
+const res = await getStats()
+if (res.code === 200) {
+  const { total, active, admin, year } = res.data
+  // 赋值到页面响应式变量
+}
+```
+
+---
+
 ## 前端封装速查表
 
 | # | 功能       | 方法   | URL                              | 前端函数名         | 使用页面         |
@@ -587,6 +633,7 @@ if (res.data.code === 200) {
 | 6 | 查询用户   | GET    | `/api/users/:id`                 | `getUserById`      | —（预留，未使用） |
 | 7 | 更新用户   | PUT    | `/api/users/:id`                 | `updateUser`       | 用户管理 / 个人中心 |
 | 8 | 修改密码   | PUT    | `/api/users/:id/password`        | `updatePassword`   | 个人中心         |
+| 9 | 首页统计   | GET    | `/api/stats`                     | `getStats`         | 首页             |
 
 > 后端还有一个 `POST /api/users/:id/change-password` 接口，前端未封装。
 

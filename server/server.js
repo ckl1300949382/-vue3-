@@ -431,6 +431,24 @@ app.post('/api/users/:id/change-password', (req, res) => {
   })
 })
 
+// 首页统计接口
+app.get('/api/stats', (req, res) => {
+  const total = users.length
+  const active = users.filter(u => u.status === 1).length
+  const admin = users.filter(u => u.role === 'admin').length
+
+  res.json({
+    code: 200,
+    message: '获取成功',
+    data: {
+      total,
+      active,
+      admin,
+      year: new Date().getFullYear()
+    }
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
 })

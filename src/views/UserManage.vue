@@ -14,7 +14,7 @@ const loading = ref(false)
 const labelPosition = ref('right')
 
 //分页查询用户列表
-const getManageData = async (keyword) => {
+const getManageData = async () => {
   loading.value = true
   try {
     const res = await manageData(keyword.value, currentPage.value, pageSize.value)
@@ -27,7 +27,7 @@ const getManageData = async (keyword) => {
     loading.value = false
   }
 }
-onMounted(() => { getManageData(keyword.value) })
+onMounted(() => { getManageData() })
 
 
 
@@ -107,7 +107,7 @@ const handleSubmit = async () => {
 
   if (res.code === 200) {
     ElMessage.success(isEditMode.value ? '更新成功' : '添加成功')
-    getManageData(keyword.value, currentPage.value, pageSize.value)
+    getManageData()
     dialogVisible.value = false
     formLabelAlign.value = {
       username: '',
@@ -132,18 +132,18 @@ const handleDelete = async (id) => {
   const res = await deleteUser(id)
   if (res.code === 200) {
     ElMessage.success('删除')
-    getManageData(keyword.value, currentPage.value, pageSize.value)
+    getManageData()
   }
 }
 
 //搜索
 const handleSearch = () => {
   resetPage()
-  getManageData(keyword.value, currentPage.value, pageSize.value)
+  getManageData()
 }
 const handleCurrentChange = (e) => {
   onPageChange(e)
-  getManageData(keyword.value, currentPage.value, pageSize.value)
+  getManageData()
 }
 
 //键盘按键绑定全局，这样在进入页面后就可以直接点击
@@ -244,7 +244,7 @@ useKeyboardSubmit(handleSearch)
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination background="#f5f7fa" layout="prev, pager, next" :total="total" :current-page="currentPage"
+    <el-pagination background layout="prev, pager, next" :total="total" :current-page="currentPage"
       :page-size="pageSize" @current-change="handleCurrentChange">
     </el-pagination>
   </div>

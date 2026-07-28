@@ -41,22 +41,22 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null')
   if (to.meta.requestAdmin) {
     if (userInfo && userInfo.role == 'admin') {
-      next()
+      return true
     } else {
-      next('/')
+      return '/'
     }
   } else if (to.meta.requestUser) {
     if (userInfo) {
-      next()
+      return true
     } else {
-      next('/')
+      return '/'
     }
   } else {
-    next()
+    return true
   }
 })
 export default router

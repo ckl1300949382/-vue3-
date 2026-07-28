@@ -20,16 +20,13 @@ const loginForm = ref({
 
 const loading = ref(false)
 
-//键盘按键绑定全局，这样在进入页面后就可以直接点击
-useKeyboardSubmit(handleLogin)
-
 //表单的输入字符判定
 const { limitLength, limitAlphanumeric } = useInputLimit(20)
-const handlePasswordInput = (e) => {
-  loginForm.value.password = limitLength(e)
+const handlePasswordInput = (val) => {
+  loginForm.value.password = limitLength(val)
 }
-const handleUsernameInput = (e) => {
-  loginForm.value.username = limitAlphanumeric(e)
+const handleUsernameInput = (val) => {
+  loginForm.value.username = limitAlphanumeric(val)
 }
 
 const handleLogin = async () => {
@@ -84,6 +81,8 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+
+useKeyboardSubmit(handleLogin)
 </script>
 
 <template>
@@ -96,13 +95,13 @@ const handleLogin = async () => {
 
       <el-form :model="loginForm" class="login-form" label-width="80px">
         <el-form-item label="用户名">
-          <el-input v-model="loginForm.username" placeholder="3-20个字符，仅支持英文、数字、下划线"
-            @input="handleUsernameInput"></el-input>
+          <el-input :model-value="loginForm.username" placeholder="3-20个字符，仅支持英文、数字、下划线"
+            @update:model-value="handleUsernameInput"></el-input>
         </el-form-item>
 
         <el-form-item label="密码">
-          <el-input v-model="loginForm.password" type="password" placeholder="6-20个字符"
-            @input="handlePasswordInput"></el-input>
+          <el-input :model-value="loginForm.password" type="password" placeholder="6-20个字符"
+            @update:model-value="handlePasswordInput"></el-input>
           <div class="password-tip">密码长度需在6-20个字符之间</div>
         </el-form-item>
 

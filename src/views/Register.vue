@@ -4,6 +4,7 @@ import { userRegister } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
+import { useInputLimit } from '@/composable/useInputLimit'
 
 const router = useRouter()
 
@@ -37,10 +38,6 @@ const handleRegister = async () => {
   // 姓名验证
   if (!name) { ElMessage.error('请输入姓名'); return }
   if (name.length < 2) { ElMessage.error('姓名至少2个字符'); return }
-  if (registerForm.value.password !== registerForm.value.confirmPassword) {
-    ElMessage.error('两次输入的密码不一致')
-    return
-  }
 
   const res = await userRegister({
     username: registerForm.value.username,
@@ -59,36 +56,19 @@ const handleRegister = async () => {
 
 useKeyboardSubmit(handleRegister)
 
+const { limitLength, limitAlphanumeric } = useInputLimit(20)
 
-
-//表单校验
-const handleUsernameInput = (e) => {
-  let value = e.target.value.replace(/[^\w]/g, '')
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  registerForm.value.username = value
+const handleUsernameInput = (val) => {
+  registerForm.value.username = limitAlphanumeric(val)
 }
-const handlePasswordInput = (e) => {
-  let value = e.target.value
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  registerForm.value.password = value
+const handlePasswordInput = (val) => {
+  registerForm.value.password = limitLength(val)
 }
-const handleNameInput = (e) => {
-  let value = e.target.value
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  registerForm.value.name = value
+const handleNameInput = (val) => {
+  registerForm.value.name = limitLength(val)
 }
-const handleConfirmPasswordInput = (e) => {
-  let value = e.target.value
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  registerForm.value.confirmPassword = value
+const handleConfirmPasswordInput = (val) => {
+  registerForm.value.confirmPassword = limitLength(val)
 }
 
 </script>
@@ -103,17 +83,18 @@ const handleConfirmPasswordInput = (e) => {
 
       <el-form :model="registerForm" class="register-form" label-width="80px">
         <el-form-item label="用户名">
-          <el-input v-model="registerForm.username" placeholder="请输入用户名" @input="handleUsernameInput"></el-input>
+          <el-input :model-value="registerForm.username" placeholder="请输入用户名"
+            @update:model-value="handleUsernameInput"></el-input>
         </el-form-item>
 
         <el-form-item label="密码">
-          <el-input v-model="registerForm.password" type="password" placeholder="请输入密码"
-            @input="handlePasswordInput"></el-input>
+          <el-input :model-value="registerForm.password" type="password" placeholder="请输入密码"
+            @update:model-value="handlePasswordInput"></el-input>
         </el-form-item>
 
         <el-form-item label="确认密码">
-          <el-input v-model="registerForm.confirmPassword" type="password" placeholder="请再次输入密码"
-            @input="handleConfirmPasswordInput"></el-input>
+          <el-input :model-value="registerForm.confirmPassword" type="password" placeholder="请再次输入密码"
+            @update:model-value="handleConfirmPasswordInput"></el-input>
         </el-form-item>
 
         <el-form-item label="邮箱">
@@ -121,7 +102,8 @@ const handleConfirmPasswordInput = (e) => {
         </el-form-item>
 
         <el-form-item label="姓名">
-          <el-input v-model="registerForm.name" placeholder="请输入姓名" @input="handleNameInput"></el-input>
+          <el-input :model-value="registerForm.name" placeholder="请输入姓名"
+            @update:model-value="handleNameInput"></el-input>
         </el-form-item>
 
         <el-form-item>
