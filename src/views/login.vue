@@ -1,9 +1,13 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/useLoginUserStore'
 import { userLogin } from '@/api/user'
 import { ElMessage } from 'element-plus'
+import { useInputLimit } from '@/composable/useInputLimit'
+import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
+
+
 
 const router = useRouter()
 // 创建用户状态管理实例，用于管理登录状态、token、用户信息
@@ -17,35 +21,15 @@ const loginForm = ref({
 const loading = ref(false)
 
 //键盘按键绑定全局，这样在进入页面后就可以直接点击
-const handleKeydown = (event) => {
-  if (event.key === 'Enter') {
-    handleLogin()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+useKeyboardSubmit(handleLogin)
 
 //表单的输入字符判定
-const handleUsernameInput = (e) => {
-  let value = e.target.value.replace(/[^\w]/g, '')
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  loginForm.value.username = value
-}
-
+const { limitLength, limitAlphanumeric } = useInputLimit(20)
 const handlePasswordInput = (e) => {
-  let value = e.target.value
-  if (value.length > 20) {
-    value = value.slice(0, 20)
-  }
-  loginForm.value.password = value
+  loginForm.value.password = limitLength(e)
+}
+const handleUsernameInput = (e) => {
+  loginForm.value.username = limitAlphanumeric(e)
 }
 
 const handleLogin = async () => {
@@ -83,19 +67,19 @@ const handleLogin = async () => {
     // axios 返回的 res.data 是后端响应的整个 JSON 对象
     // 后端格式: { code, message, data: { token, user } }
     // 所以要通过 res.data.data 才能拿到 token 和 user
-    if (res.data.code === 200) {
+    if (res.code === 200) {
       ElMessage.success('登录成功')
       // 调用 Pinia Store 的 login 方法，统一管理登录状态
       // 这个方法内部会自动把 token 和 userInfo 保存到 localStorage
-      userStore.login(res.data.data.token, res.data.data.user)
+      userStore.login(res.data.token, res.data.user)
       // 跳转到首页
       router.push('/')
     } else {
-      // 后端返回错误时，message 也在 res.data 里面
-      ElMessage.error(res.data.message || '登录失败')
+      // 后端返回错误时，message 也在 res 里面
+      ElMessage.error(res.message || '登录失败')
     }
   } catch (error) {
-    ElMessage.error(error?.response?.data?.message || '登录失败，请检查网络')
+    ElMessage.error('登录失败，请检查网络')
   } finally {
     loading.value = false
   }

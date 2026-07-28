@@ -14,7 +14,10 @@
       "Bash(taskkill /F /PID 14956)",
       "Bash(curl *)",
       "Bash(taskkill //F //PID 14956)",
-      "Bash(npx playwright *)"
+      "Bash(npx playwright *)",
+      "WebSearch",
+      "Bash(python3 -c \"import docx; print\\('python-docx OK'\\)\")",
+      "Bash(/c/Users/lin/AppData/Local/Programs/Python/Python312/python *)"
     ]
   }
 }

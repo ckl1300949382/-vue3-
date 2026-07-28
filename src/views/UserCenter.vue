@@ -37,13 +37,13 @@ const handleSubmit = async () => {
     email: FormLabelAlign.value.email,
   })
 
-  if (res.data.code === 200) {
+  if (res.code === 200) {
     ElMessage.success('修改成功')
     userStore.userInfo.name = FormLabelAlign.value.name
     userStore.userInfo.email = FormLabelAlign.value.email
     localStorage.setItem('userInfo', JSON.stringify(userStore.userInfo))
   } else {
-    ElMessage.error(res.data.message || '修改失败')
+    ElMessage.error(res.message || '修改失败')
   }
 }
 
@@ -89,7 +89,7 @@ const submitForm = async () => {
       oldPassword: passwordForm.value.oldPassword,
       newPassword: passwordForm.value.newPassword
     })
-    if (res.data.code === 200) {
+    if (res.code === 200) {
       ElMessage.success('修改成功')
       dialogVisible.value = false
       passwordForm.value = {
@@ -99,14 +99,14 @@ const submitForm = async () => {
       }
     }
   } catch (err) {
-    ElMessage.error(err.message && '修改失败')
+    ElMessage.error(err?.message || '修改失败')
   }
-  const resetForm = (formName) => {
-    passwordForm.value = {
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }
+}
+const resetForm = (formName) => {
+  passwordForm.value = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   }
 }
 

@@ -1,21 +1,15 @@
 <script setup>
-import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import GLobalHeader from '@/components/GlobalHeader.vue'
+import GlobalHeader from '@/components/GlobalHeader.vue'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 const route = useRoute()
-
-// 调试：监听路由变化
-watch(() => route.fullPath, (path) => {
-  console.log('路由变化:', path, '组件:', route.component)
-})
 </script>
 
 
 <template>
   <el-container>
     <el-header class="el-header" style="background-color: #fff; padding-bottom: 100px;">
-      <GLobalHeader />
+      <GlobalHeader />
     </el-header>
     <el-main class="el-main">
       <Breadcrumb />

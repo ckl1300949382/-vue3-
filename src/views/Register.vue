@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { userRegister } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
 
 const router = useRouter()
 
@@ -48,13 +49,16 @@ const handleRegister = async () => {
     name: registerForm.value.name
   })
 
-  if (res.data.code === 200) {
+  if (res.code === 200) {
     ElMessage.success('注册成功')
     router.push('/user/login')
   } else {
-    ElMessage.error('注册失败')
+    ElMessage.error(res.message || '注册失败')
   }
 }
+
+useKeyboardSubmit(handleRegister)
+
 
 
 //表单校验

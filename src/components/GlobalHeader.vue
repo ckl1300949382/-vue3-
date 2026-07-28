@@ -1,7 +1,6 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { userRegister } from '@/api/user'
 import { useUserStore } from '@/store/useLoginUserStore'
 
 const router = useRouter()

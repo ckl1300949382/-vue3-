@@ -1,4 +1,4 @@
-import instance from '@/reques'
+import instance from '@/request'
 
 export const userLogin = async ({ username, password }) => {
   return await instance.request({

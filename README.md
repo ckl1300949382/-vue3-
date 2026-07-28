@@ -180,12 +180,12 @@
 ### 注册功能
 - 密码复杂度要求（需要有什么特殊符号）
 
-### 代码小问题
-- `src/reques.ts` 文件名拼写错误（应是 `request`）
-- `login.vue` 和 `Register.vue` 文件名大小写不一致
-- `src/layout/basclayout.vue` 命名不规范（建议 `BaseLayout.vue`）
+### 代码小问题（已修复 ✅）
+- ~~`src/reques.ts` 文件名拼写错误（应是 `request`）~~ → 已重命名为 `request.ts`
+- ~~`login.vue` 和 `Register.vue` 文件名大小写不一致~~ → 已统一为 `Login.vue`
+- ~~`src/layout/basclayout.vue` 命名不规范~~ → 已重命名为 `BaseLayout.vue`
+- ~~`src/stores/counter.js` 无用文件~~ → 已删除
 - axios 请求拦截器没有注入 token，登录后的请求不会自动带上认证信息
-- `src/stores/counter.js` 是脚手架生成的示例代码，目前未使用，可以删除
 
 ---
 

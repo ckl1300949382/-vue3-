@@ -1,9 +1,9 @@
 <script setup>
-import basclayout from '@/layout/basclayout.vue'
+import BaseLayout from '@/layout/BaseLayout.vue'
 </script>
 
 <template>
-    <basclayout />
+    <BaseLayout />
 </template>
 
 <style scoped></style>

@@ -1,29 +1,25 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { manageData, deleteUser, addUser, updateUser } from '@/api/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-
+import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
+import { usePage } from '@/composable/usePage'
 
 
 const manageDataList = ref([])
 const keyword = ref('')
-const currentPage = ref(1)
-const pageSize = ref(10)
-const total = ref(0)
+const { currentPage, pageSize, total, onPageChange, resetPage } = usePage()
 
 const loading = ref(false)
 const labelPosition = ref('right')
 
-
-const getManageData = async (keyword, page = 1, pageSize = 10) => {
+//分页查询用户列表
+const getManageData = async (keyword) => {
   loading.value = true
   try {
-    const res = await manageData(keyword, page, pageSize)
-    console.log('API响应:', res)
-    manageDataList.value = res.data.data.list
-    total.value = res.data.data.total
-    console.log('total值:', total.value)
-    console.log('当前页码:', page)
+    const res = await manageData(keyword.value, currentPage.value, pageSize.value)
+    manageDataList.value = res.data.list
+    total.value = res.data.total
   } catch (err) {
     console.error('获取用户列表失败', err);
     ElMessage.error('获取用户列表失败，请稍后重试')
@@ -31,7 +27,7 @@ const getManageData = async (keyword, page = 1, pageSize = 10) => {
     loading.value = false
   }
 }
-onMounted(() => { getManageData(keyword.value, currentPage.value, pageSize.value) })
+onMounted(() => { getManageData(keyword.value) })
 
 
 
@@ -109,7 +105,7 @@ const handleSubmit = async () => {
     })
   }
 
-  if (res.data.code === 200) {
+  if (res.code === 200) {
     ElMessage.success(isEditMode.value ? '更新成功' : '添加成功')
     getManageData(keyword.value, currentPage.value, pageSize.value)
     dialogVisible.value = false
@@ -122,7 +118,7 @@ const handleSubmit = async () => {
       status: 1,
     }
   } else {
-    ElMessage.error(res.data.message || '提交失败')
+    ElMessage.error(res.message || '提交失败')
   }
 }
 
@@ -134,7 +130,7 @@ const handleDelete = async (id) => {
     type: 'warning'
   })
   const res = await deleteUser(id)
-  if (res.data.code === 200) {
+  if (res.code === 200) {
     ElMessage.success('删除')
     getManageData(keyword.value, currentPage.value, pageSize.value)
   }
@@ -142,28 +138,16 @@ const handleDelete = async (id) => {
 
 //搜索
 const handleSearch = () => {
-  currentPage.value = 1
+  resetPage()
   getManageData(keyword.value, currentPage.value, pageSize.value)
 }
 const handleCurrentChange = (e) => {
-  currentPage.value = e
+  onPageChange(e)
   getManageData(keyword.value, currentPage.value, pageSize.value)
 }
 
 //键盘按键绑定全局，这样在进入页面后就可以直接点击
-const handleKeydown = (event) => {
-  if (event.key === 'Enter') {
-    handleSearch()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+useKeyboardSubmit(handleSearch)
 
 
 </script>
