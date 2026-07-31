@@ -39,9 +39,10 @@ const handleSubmit = async () => {
 
   if (res.code === 200) {
     ElMessage.success('修改成功')
-    userStore.userInfo.name = FormLabelAlign.value.name
-    userStore.userInfo.email = FormLabelAlign.value.email
-    localStorage.setItem('userInfo', JSON.stringify(userStore.userInfo))
+    userStore.updateUserInfo({
+      name: FormLabelAlign.value.name,
+      email: FormLabelAlign.value.email
+    })
   } else {
     ElMessage.error(res.message || '修改失败')
   }
@@ -198,14 +199,14 @@ const resetForm = (formName) => {
 }
 
 .center-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .card-header {
   font-size: 18px;
-  font-weight: 600;
-  color: #303133;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }
 
 .form-actions {

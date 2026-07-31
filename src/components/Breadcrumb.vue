@@ -17,9 +17,16 @@ const breadcrumb = computed(() => {
 })
 </script>
 <template>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: item.path }" v-for="item in breadcrumb" :key="item.path">{{ item.title
-            }}</el-breadcrumb-item>
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="my-breadcrumb">
+        <el-breadcrumb-item :to="{ path: item.path }" v-for="item in breadcrumb" :key="item.path">
+          {{ item.title }}
+        </el-breadcrumb-item>
     </el-breadcrumb>
 </template>
-<style></style>
+
+<style scoped>
+.my-breadcrumb {
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+</style>

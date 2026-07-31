@@ -4,6 +4,7 @@ import { manageData, deleteUser, addUser, updateUser } from '@/api/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
 import { usePage } from '@/composable/usePage'
+import { useDebounce } from '@/composable/useDebounce'
 
 
 const manageDataList = ref([])
@@ -137,10 +138,10 @@ const handleDelete = async (id) => {
 }
 
 //搜索
-const handleSearch = () => {
+const handleSearch = useDebounce(() => {
   resetPage()
   getManageData()
-}
+})
 const handleCurrentChange = (e) => {
   onPageChange(e)
   getManageData()
@@ -265,13 +266,13 @@ useKeyboardSubmit(handleSearch)
 .page-header h1 {
   font-size: 22px;
   margin: 0 0 6px;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .page-desc {
   margin: 0;
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .toolbar {

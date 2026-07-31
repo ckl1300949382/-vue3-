@@ -1,0 +1,48 @@
+/* ===========================================
+   Design Tokens · 全站统一设计令牌
+   修改此处即可全局更新主题
+   =========================================== */
+:root {
+  /* ---- 主题色 ---- */
+  --primary: #409eff;
+  --primary-light: #79bbff;
+  --primary-dark: #337ecc;
+  --primary-bg: rgba(64, 158, 255, 0.06);
+
+  /* ---- 语义色 ---- */
+  --success: #67c23a;
+  --warning: #e6a23c;
+  --danger: #f56c6c;
+  --info: #909399;
+
+  /* ---- 中性色 ---- */
+  --text-primary: #303133;
+  --text-regular: #606266;
+  --text-secondary: #909399;
+  --text-placeholder: #c0c4cc;
+  --border: #dcdfe6;
+  --border-light: #e4e7ed;
+  --border-lighter: #ebeef5;
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-hover: #f5f7fa;
+
+  /* ---- 阴影 · 三级阶梯 ---- */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+  /* ---- 圆角 ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* ---- 字体 ---- */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+
+  /* ---- 过渡 ---- */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}

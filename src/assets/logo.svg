@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- 外圈 -->
+  <circle cx="32" cy="32" r="30" fill="#1e3c72"/>
+  <!-- 内圈装饰 -->
+  <circle cx="32" cy="32" r="26" fill="#2a5298"/>
+  <!-- 人物头部 -->
+  <circle cx="32" cy="24" r="8" fill="#ffffff"/>
+  <!-- 人物身体 -->
+  <path d="M16 56 C16 44 24 40 32 40 C40 40 48 44 48 56" fill="#ffffff"/>
+  <!-- 字母 U 装饰 -->
+  <text x="32" y="35" text-anchor="middle" fill="#1e3c72" font-size="16" font-weight="bold" font-family="Arial">U</text>
+</svg>

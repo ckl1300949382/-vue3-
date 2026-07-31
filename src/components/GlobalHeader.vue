@@ -5,22 +5,20 @@ import { useUserStore } from '@/store/useLoginUserStore'
 
 const router = useRouter()
 const route = useRoute()
-//登录状态
 const userStore = useUserStore()
+
 const goLogin = () => {
   router.push('/user/login')
 }
-// 退出登录：调用 Pinia Store 的 logout 方法
+
 const handleLogout = () => {
   userStore.logout()
   if (route.path === '/') return
-  router.push('/') //当用户在首页的时候就不会执行跳转了
+  router.push('/')
 }
-
 
 const activeName = ref(route.name || 'home')
 
-// 标签页名 → 实际路由路径的映射
 const routeMap = {
   home: '/',
   userLogin: '/user/login',
@@ -29,51 +27,124 @@ const routeMap = {
   userCenter: '/user/center',
 }
 
-// 点击标签切换路由
 const handleClick = (tab) => {
   activeName.value = tab.props.name
   router.push(routeMap[tab.props.name] || '/')
 }
 
-// 浏览器前进/后退时同步标签高亮
 watch(() => route.name, (newName) => {
   if (newName) activeName.value = newName
 })
 </script>
 
 <template>
-  <el-row>
-    <el-col :span="4">
-      <div class="grid-content bg-purple">
-        <img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" alt="logo" style="height: 60px;">
-        <span style="font-size: 20px;color: blue;">全局头</span>
-      </div>
-    </el-col>
-    <el-col :span="16">
-      <div class="grid-content bg-purple-light">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="首页" name="home"></el-tab-pane>
-          <el-tab-pane label="用户登录" name="userLogin"></el-tab-pane>
-          <el-tab-pane label="用户注册" name="userRegister"></el-tab-pane>
-          <el-tab-pane label="用户管理" name="userManage"
-            v-if="userStore.isLoggedIn && userStore.userInfo?.role == 'admin'"></el-tab-pane>
-          <el-tab-pane label="个人中心" name="userCenter" v-if="userStore.isLoggedIn"></el-tab-pane>
+  <div class="header-frame">
+    <!-- 系统标题 - 固定在左侧 -->
+    <span class="header-title">用户管理系统</span>
+
+    <!-- 中间区域：与 main 内容左对齐 -->
+    <div class="header-body">
+      <!-- 导航 Tabs - 左对齐 -->
+      <div class="header-nav">
+        <el-tabs :model-value="activeName" @tab-click="handleClick">
+          <el-tab-pane label="首页" name="home" />
+          <el-tab-pane label="用户登录" name="userLogin" />
+          <el-tab-pane label="用户注册" name="userRegister" />
+          <el-tab-pane
+            label="用户管理"
+            name="userManage"
+            v-if="userStore.isLoggedIn && userStore.userInfo?.role == 'admin'"
+          />
+          <el-tab-pane label="个人中心" name="userCenter" v-if="userStore.isLoggedIn" />
         </el-tabs>
       </div>
-    </el-col>
-    <el-col :span="4">
-      <div class="grid-content bg-purple">
-        <template v-if="userStore.isLoggedIn">
-          <span>{{ userStore.userInfo?.username }}</span>
-          <el-button type="primary" @click="handleLogout">退出</el-button>
 
+      <!-- 用户区 -->
+      <div class="header-right">
+        <template v-if="userStore.isLoggedIn">
+          <span class="header-username">{{ userStore.userInfo?.username }}</span>
+          <el-button type="primary" size="small" @click="handleLogout">退出</el-button>
         </template>
         <template v-else>
-          <el-button type="primary" @click="goLogin">登录</el-button>
+          <el-button type="primary" size="small" @click="goLogin">登录</el-button>
         </template>
       </div>
-    </el-col>
-  </el-row>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.header-frame {
+  position: relative;
+  height: 60px;
+}
+
+.header-title {
+  position: absolute;
+  left: 24px;
+  top: 0;
+  line-height: 60px;
+  font-size: 17px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.header-body {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  gap: 24px;
+}
+
+/* Tab 导航 - 左对齐 */
+.header-nav {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.header-nav :deep(.el-tabs) {
+  height: 60px;
+}
+
+.header-nav :deep(.el-tabs__header) {
+  margin: 0;
+  border-bottom: none;
+}
+
+.header-nav :deep(.el-tabs__nav-wrap) {
+  border-bottom: none;
+}
+
+.header-nav :deep(.el-tabs__nav-wrap::after) {
+  display: none;
+}
+
+.header-nav :deep(.el-tabs__item) {
+  height: 60px;
+  line-height: 60px;
+  font-size: 14px;
+  padding: 0 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-username {
+  font-size: 14px;
+  color: var(--text-regular);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+</style>

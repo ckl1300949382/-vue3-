@@ -6,11 +6,9 @@ import { userLogin } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { useInputLimit } from '@/composable/useInputLimit'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
-
-
+import AuthLayout from '@/components/AuthLayout.vue'
 
 const router = useRouter()
-// 创建用户状态管理实例，用于管理登录状态、token、用户信息
 const userStore = useUserStore()
 
 const loginForm = ref({
@@ -20,7 +18,6 @@ const loginForm = ref({
 
 const loading = ref(false)
 
-//表单的输入字符判定
 const { limitLength, limitAlphanumeric } = useInputLimit(20)
 const handlePasswordInput = (val) => {
   loginForm.value.password = limitLength(val)
@@ -54,25 +51,16 @@ const handleLogin = async () => {
 
   loading.value = true
   try {
-    // 2. 调接口
     const res = await userLogin({
       username: loginForm.value.username,
       password: loginForm.value.password
     })
 
-    // 3. 成功后处理
-    // axios 返回的 res.data 是后端响应的整个 JSON 对象
-    // 后端格式: { code, message, data: { token, user } }
-    // 所以要通过 res.data.data 才能拿到 token 和 user
     if (res.code === 200) {
       ElMessage.success('登录成功')
-      // 调用 Pinia Store 的 login 方法，统一管理登录状态
-      // 这个方法内部会自动把 token 和 userInfo 保存到 localStorage
       userStore.login(res.data.token, res.data.user)
-      // 跳转到首页
       router.push('/')
     } else {
-      // 后端返回错误时，message 也在 res 里面
       ElMessage.error(res.message || '登录失败')
     }
   } catch (error) {
@@ -86,88 +74,58 @@ useKeyboardSubmit(handleLogin)
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <div class="login-header">
-        <img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" alt="logo" class="login-logo">
-        <h2>用户登录</h2>
+  <AuthLayout title="用户登录">
+    <el-form :model="loginForm" class="auth-form" label-width="80px">
+      <el-form-item label="用户名">
+        <el-input
+          :model-value="loginForm.username"
+          placeholder="3-20个字符，仅支持英文、数字、下划线"
+          @update:model-value="handleUsernameInput"
+        />
+      </el-form-item>
+
+      <el-form-item label="密码">
+        <el-input
+          :model-value="loginForm.password"
+          type="password"
+          placeholder="6-20个字符"
+          @update:model-value="handlePasswordInput"
+        />
+        <div class="form-tip">密码长度需在6-20个字符之间</div>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" class="submit-btn" :loading="loading" @click="handleLogin">
+          登录
+        </el-button>
+      </el-form-item>
+
+      <div class="form-links">
+        <el-link type="primary" href="/user/register">还没有账号？去注册</el-link>
       </div>
-
-      <el-form :model="loginForm" class="login-form" label-width="80px">
-        <el-form-item label="用户名">
-          <el-input :model-value="loginForm.username" placeholder="3-20个字符，仅支持英文、数字、下划线"
-            @update:model-value="handleUsernameInput"></el-input>
-        </el-form-item>
-
-        <el-form-item label="密码">
-          <el-input :model-value="loginForm.password" type="password" placeholder="6-20个字符"
-            @update:model-value="handlePasswordInput"></el-input>
-          <div class="password-tip">密码长度需在6-20个字符之间</div>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" class="login-btn" :loading="loading" @click="handleLogin">登录</el-button>
-        </el-form-item>
-
-        <div class="login-links">
-          <el-link type="primary" href="/user/register">还没有账号？去注册</el-link>
-        </div>
-      </el-form>
-    </div>
-  </div>
+    </el-form>
+  </AuthLayout>
 </template>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.login-box {
-  width: 400px;
-  padding: 40px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.login-logo {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 16px;
-}
-
-.login-header h2 {
-  margin: 0;
-  color: #303133;
-}
-
-.login-form {
+.auth-form {
   width: 100%;
 }
 
-.login-btn {
+.submit-btn {
   width: 100%;
   height: 40px;
   font-size: 16px;
 }
 
-.login-links {
+.form-links {
   text-align: center;
   margin-top: 20px;
 }
 
-.password-tip {
+.form-tip {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-top: 8px;
 }
 </style>

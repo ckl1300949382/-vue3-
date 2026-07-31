@@ -34,9 +34,13 @@ onMounted(() => {
         <h1 class="hero-title">欢迎回来</h1>
         <p class="hero-desc">这是你的全局管理系统，在这里你可以管理用户、查看数据。</p>
         <div class="hero-tags">
-          <span class="tag tag-blue">Vue 3</span>
-          <span class="tag tag-green">Element Plus</span>
-          <span class="tag tag-orange">Express</span>
+          <span class="hero-tag">Vue 3</span>
+          <span class="hero-tag">Vite</span>
+          <span class="hero-tag">Vue Router</span>
+          <span class="hero-tag">Pinia</span>
+          <span class="hero-tag">Element Plus</span>
+          <span class="hero-tag">Axios</span>
+          <span class="hero-tag">Express</span>
         </div>
       </div>
     </div>
@@ -118,17 +122,8 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- ===== 底部 ===== -->
-    <div class="footer">
-      <div class="footer-links">
-        <a href="#">关于我们</a>
-        <a href="#">帮助文档</a>
-        <a href="#">联系我们</a>
-      </div>
-      <p class="footer-copy">© 2026 全局管理系统 · 用 Vue 3 构建</p>
-    </div>
-  </div>
-</template>
+	  </div>
+	</template>
 
 <style scoped>
 /* ===== 整体容器 ===== */
@@ -140,8 +135,8 @@ onMounted(() => {
 
 /* ===== 欢迎区 ===== */
 .hero {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #1a2a6c 0%, #2d4373 50%, #1e3c72 100%);
+  border-radius: var(--radius-lg);
   padding: 48px 40px;
   margin-bottom: 28px;
   color: #fff;
@@ -149,14 +144,14 @@ onMounted(() => {
 
 .hero-title {
   font-size: 30px;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   margin: 0 0 10px;
 }
 
 .hero-desc {
   font-size: 15px;
   margin: 0 0 20px;
-  opacity: 0.8;
+  opacity: 0.85;
   line-height: 1.6;
 }
 
@@ -165,26 +160,14 @@ onMounted(() => {
   gap: 10px;
 }
 
-.tag {
+.hero-tag {
   display: inline-block;
-  padding: 4px 14px;
-  border-radius: 20px;
+  padding: 4px 16px;
+  border-radius: 99px;
   font-size: 12px;
-  font-weight: 500;
-}
-
-.tag-blue {
+  font-weight: var(--weight-medium);
   background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-}
-
-.tag-green {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-}
-
-.tag-orange {
-  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
   color: #fff;
 }
 
@@ -197,26 +180,26 @@ onMounted(() => {
 }
 
 .stat-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
   cursor: default;
 }
 
 .stat-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,7 +208,7 @@ onMounted(() => {
 }
 
 .stat-icon-users {
-  background: #ecf5ff;
+  background: var(--primary-bg);
 }
 
 .stat-icon-active {
@@ -247,14 +230,14 @@ onMounted(() => {
 
 .stat-num {
   font-size: 24px;
-  font-weight: 700;
-  color: #303133;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-top: 2px;
 }
 
@@ -267,18 +250,18 @@ onMounted(() => {
 }
 
 .panel {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
 .panel-header {
   padding: 16px 20px;
   font-size: 15px;
-  font-weight: 600;
-  color: #303133;
-  border-bottom: 1px solid #f2f2f2;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-lighter);
 }
 
 .panel-body {
@@ -297,15 +280,15 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: 10px;
-  background: #fafafa;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
   text-decoration: none;
-  color: #303133;
-  transition: background 0.15s;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
 }
 
 .shortcut:hover {
-  background: #ecf5ff;
+  background: var(--primary-bg);
 }
 
 .shortcut-icon {
@@ -314,14 +297,14 @@ onMounted(() => {
 
 .shortcut-text {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 /* 系统信息 */
 .info-row {
   display: flex;
   padding: 10px 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border-lighter);
 }
 
 .info-row:last-child {
@@ -331,13 +314,13 @@ onMounted(() => {
 .info-key {
   width: 90px;
   font-size: 13px;
-  color: #909399;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
 .info-val {
   font-size: 13px;
-  color: #303133;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -348,39 +331,7 @@ onMounted(() => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #67c23a;
-  position: relative;
-}
-
-/* ===== 底部 ===== */
-.footer {
-  border-top: 1px solid #eee;
-  padding: 24px 0 32px;
-  text-align: center;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-bottom: 10px;
-}
-
-.footer-links a {
-  font-size: 13px;
-  color: #909399;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.footer-links a:hover {
-  color: #409eff;
-}
-
-.footer-copy {
-  font-size: 12px;
-  color: #c0c4cc;
-  margin: 0;
+  background: var(--success);
 }
 
 /* ===== 响应式 ===== */

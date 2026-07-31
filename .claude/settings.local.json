@@ -17,7 +17,8 @@
       "Bash(npx playwright *)",
       "WebSearch",
       "Bash(python3 -c \"import docx; print\\('python-docx OK'\\)\")",
-      "Bash(/c/Users/lin/AppData/Local/Programs/Python/Python312/python *)"
+      "Bash(/c/Users/lin/AppData/Local/Programs/Python/Python312/python *)",
+      "WebFetch(domain:localhost)"
     ]
   }
 }
