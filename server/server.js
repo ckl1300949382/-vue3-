@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const path = require('path')
 
 const app = express()
 const PORT = 3001
@@ -10,7 +12,11 @@ app.use(express.json())
 
 const JWT_SECRET = 'your-secret-key-here'
 
-const users = [
+// 数据文件路径
+const DATA_FILE = path.join(__dirname, 'users.json')
+
+// 默认初始用户数据
+const DEFAULT_USERS = [
   {
     id: 1,
     username: 'admin',
@@ -163,7 +169,34 @@ const users = [
   }
 ]
 
-let nextUserId = 16
+// 从文件加载用户数据
+function loadUsers() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, 'utf-8')
+      const parsed = JSON.parse(data)
+      return parsed.users, parsed.nextUserId
+    }
+  } catch (err) {
+    console.error('加载用户数据失败:', err)
+  }
+  // 文件不存在或读取失败，使用默认数据并创建文件
+  saveUsers(DEFAULT_USERS, 16)
+  return { users: DEFAULT_USERS, nextUserId: 16 }
+}
+
+// 保存用户数据到文件
+function saveUsers(users, nextUserId) {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify({ users, nextUserId }, null, 2), 'utf-8')
+    console.log('用户数据已保存')
+  } catch (err) {
+    console.error('保存用户数据失败:', err)
+  }
+}
+
+// 初始化加载
+const { users, nextUserId } = loadUsers()
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body
@@ -236,6 +269,7 @@ app.post('/api/register', (req, res) => {
   }
 
   users.push(newUser)
+  saveUsers(users, nextUserId)
 
   res.json({
     code: 200,
@@ -280,6 +314,7 @@ app.post('/api/users', (req, res) => {
   }
 
   users.push(newUser)
+  saveUsers(users, nextUserId)
 
   res.json({
     code: 200,
@@ -362,6 +397,8 @@ app.put('/api/users/:id', (req, res) => {
   if (role) users[userIndex].role = role
   if (password) users[userIndex].password = password
 
+  saveUsers(users, nextUserId)
+
   res.json({
     code: 200,
     message: '更新成功',
@@ -381,6 +418,7 @@ app.delete('/api/users/:id', (req, res) => {
   }
 
   const deletedUser = users.splice(userIndex, 1)[0]
+  saveUsers(users, nextUserId)
 
   res.json({
     code: 200,
@@ -424,6 +462,7 @@ app.post('/api/users/:id/change-password', (req, res) => {
   }
 
   users[userIndex].password = newPassword
+  saveUsers(users, nextUserId)
 
   res.json({
     code: 200,

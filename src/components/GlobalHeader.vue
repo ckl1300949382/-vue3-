@@ -48,13 +48,10 @@ watch(() => route.name, (newName) => {
       <div class="header-nav">
         <el-tabs :model-value="activeName" @tab-click="handleClick">
           <el-tab-pane label="首页" name="home" />
-          <el-tab-pane label="用户登录" name="userLogin" />
-          <el-tab-pane label="用户注册" name="userRegister" />
-          <el-tab-pane
-            label="用户管理"
-            name="userManage"
-            v-if="userStore.isLoggedIn && userStore.userInfo?.role == 'admin'"
-          />
+          <el-tab-pane label="用户登录" name="userLogin" v-if="!userStore.isLoggedIn" />
+          <el-tab-pane label="用户注册" name="userRegister" v-if="!userStore.isLoggedIn" />
+          <el-tab-pane label="用户管理" name="userManage"
+            v-if="userStore.isLoggedIn && userStore.userInfo?.role == 'admin'" />
           <el-tab-pane label="个人中心" name="userCenter" v-if="userStore.isLoggedIn" />
         </el-tabs>
       </div>
