@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/useLoginUserStore'
 import { userLogin } from '@/api/user'
@@ -15,6 +15,18 @@ const loginForm = ref({
   username: '',
   password: ''
 })
+const formRef = ref(null)
+const labelPosition = ref('top')
+const rules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, max: 20, message: '用户名长度 3-20 个字符', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '密码长度 6-20 个字符', trigger: 'blur' }
+  ]
+}
 
 const loading = ref(false)
 
@@ -28,27 +40,11 @@ const handleUsernameInput = (val) => {
 
 const handleLogin = async () => {
   if (loading.value) return
-
-  const { username, password } = loginForm.value
-
-  if (!username) {
-    ElMessage.error('请输入用户名')
+  try {
+    await formRef.value?.validate()
+  } catch {
     return
   }
-  if (username.length < 3) {
-    ElMessage.error('用户名至少3个字符')
-    return
-  }
-
-  if (!password) {
-    ElMessage.error('请输入密码')
-    return
-  }
-  if (password.length < 6) {
-    ElMessage.error('密码至少6个字符')
-    return
-  }
-
   loading.value = true
   try {
     const res = await userLogin({
@@ -62,6 +58,7 @@ const handleLogin = async () => {
       router.push('/')
     } else {
       ElMessage.error(res.message || '登录失败')
+      nextTick(() => formRef.value?.clearValidate())
     }
   } catch (error) {
     ElMessage.error('登录失败，请检查网络')
@@ -75,22 +72,16 @@ useKeyboardSubmit(handleLogin)
 
 <template>
   <AuthLayout title="用户登录">
-    <el-form :model="loginForm" class="auth-form" label-width="80px">
-      <el-form-item label="用户名">
-        <el-input
-          :model-value="loginForm.username"
-          placeholder="3-20个字符，仅支持英文、数字、下划线"
-          @update:model-value="handleUsernameInput"
-        />
+    <el-form :model="loginForm" class="auth-form" label-width="80px" :label-position="labelPosition" ref="formRef"
+      :rules="rules">
+      <el-form-item label="用户名" prop="username">
+        <el-input :model-value="loginForm.username" placeholder="3-20个字符，仅支持英文、数字、下划线"
+          @update:model-value="handleUsernameInput" />
       </el-form-item>
 
-      <el-form-item label="密码">
-        <el-input
-          :model-value="loginForm.password"
-          type="password"
-          placeholder="6-20个字符"
-          @update:model-value="handlePasswordInput"
-        />
+      <el-form-item label="密码" prop="password">
+        <el-input :model-value="loginForm.password" type="password" placeholder="6-20个字符"
+          @update:model-value="handlePasswordInput" />
         <div class="form-tip">密码长度需在6-20个字符之间</div>
       </el-form-item>
 
@@ -101,7 +92,7 @@ useKeyboardSubmit(handleLogin)
       </el-form-item>
 
       <div class="form-links">
-        <el-link type="primary" href="/user/register">还没有账号？去注册</el-link>
+        <el-link type="primary" @click="router.push('/user/register')">还没有账号？去注册</el-link>
       </div>
     </el-form>
   </AuthLayout>

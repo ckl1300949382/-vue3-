@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { manageData, deleteUser, addUser, updateUser } from '@/api/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
@@ -7,7 +7,27 @@ import { usePage } from '@/composable/usePage'
 import { useDebounce } from '@/composable/useDebounce'
 import { useUserStore } from '@/store/useLoginUserStore'
 
-
+const formRef = ref(null)
+const isEditMode = ref(false)
+const rules = computed(() => (
+  {
+    username: [
+      { require: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 3, max: 20, message: '用户名长度 3-20 个字符', trigger: 'blur' }
+    ],
+    name: [
+      { require: true, message: "请输入姓名", trigger: 'blur' }
+    ],
+    email: [
+      { required: true, message: '请输入邮箱', trigger: 'blur' },
+      { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
+    ],
+    password: isEditMode.value ? [] : [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '密码长度 6-20 个字符', trigger: 'blur' }
+    ]
+  }
+))
 
 const manageDataList = ref([])
 const keyword = ref('')
@@ -44,7 +64,6 @@ const formLabelAlign = ref({
   role: 'user',
   status: 1
 })
-const isEditMode = ref(false)
 const editId = ref(null)
 const dialogVisible = ref(false)
 const handleAdd = () => {
@@ -59,6 +78,7 @@ const handleAdd = () => {
     role: 'user',
     status: 1
   }
+  nextTick(() => formRef.value?.clearValidate())
 }
 //编辑用户
 const handleEdit = (row) => {
@@ -73,62 +93,54 @@ const handleEdit = (row) => {
     status: row.status
   }
   dialogVisible.value = true
+  nextTick(() => formRef.value?.clearValidate())
 }
 const handleSubmit = async () => {
-  let res
-  if (!formLabelAlign.value.username) {
-    ElMessage.error('请输入用户名')
+  try {
+    await formRef.value.validate()
+  } catch {
     return
   }
-  if (!formLabelAlign.value.name) {
-    ElMessage.error('请输入姓名')
-    return
-  }
-  if (!formLabelAlign.value.email) {
-    ElMessage.error('请输入邮箱')
-    return
-  }
-  if (!isEditMode.value && !formLabelAlign.value.password) {
-    ElMessage.error('请输入密码')
-    return
-  }
-  if (isEditMode.value) {
-    res = await updateUser(editId.value, {
-      name: formLabelAlign.value.name,
-      email: formLabelAlign.value.email,
-      role: formLabelAlign.value.role,
-      status: formLabelAlign.value.status
-    })
-  } else {
-    res = await addUser({
-      username: formLabelAlign.value.username,
-      name: formLabelAlign.value.name,
-      email: formLabelAlign.value.email,
-      password: formLabelAlign.value.password
-    })
-  }
-
-  if (res.code === 200) {
-    ElMessage.success(isEditMode.value ? '更新成功' : '添加成功')
-    getManageData()
-    dialogVisible.value = false
-    formLabelAlign.value = {
-      username: '',
-      name: '',
-      email: '',
-      password: '',
-      role: 'user',
-      status: 1,
+  try {
+    let res
+    if (isEditMode.value) {
+      res = await updateUser(editId.value, {
+        name: formLabelAlign.value.name,
+        email: formLabelAlign.value.email,
+        role: formLabelAlign.value.role,
+        status: formLabelAlign.value.status
+      })
+    } else {
+      res = await addUser({
+        username: formLabelAlign.value.username,
+        name: formLabelAlign.value.name,
+        email: formLabelAlign.value.email,
+        password: formLabelAlign.value.password
+      })
     }
-  } else {
-    ElMessage.error(res.message || '提交失败')
+    if (res.code === 200) {
+      ElMessage.success(isEditMode.value ? '更新成功' : '添加成功')
+      getManageData()
+      dialogVisible.value = false
+      formLabelAlign.value = {
+        username: '',
+        name: '',
+        email: '',
+        password: '',
+        role: 'user',
+        status: 1,
+      }
+    }
+    nextTick(() => formRef.value?.clearValidate())
+  } catch (err) {
+    ElMessage.error(err?.message || '提交失败')
   }
 }
 
 //删除用户
 const handleDelete = async (id) => {
-  const shore = useUserStore()
-  if (shore.userInfo.id === id) {
+  const store = useUserStore()
+  if (store.userInfo?.id === id) {
     ElMessage.error('不能删除自己')
     return
   }
@@ -173,17 +185,17 @@ useKeyboardSubmit(handleSearch)
 
   <!-- 查找用户的表单 -->
   <el-dialog v-model="dialogVisible" :title="isEditMode ? '编辑用户' : '新增用户'" width="500px">
-    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-      <el-form-item label="用户名">
+    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" ref="formRef" :rules="rules">
+      <el-form-item label="用户名" prop="username">
         <el-input v-model="formLabelAlign.username"></el-input>
       </el-form-item>
-      <el-form-item label="姓名">
+      <el-form-item label="姓名" prop="name">
         <el-input v-model="formLabelAlign.name"></el-input>
       </el-form-item>
-      <el-form-item label="邮箱">
+      <el-form-item label="邮箱" prop="email">
         <el-input v-model="formLabelAlign.email"></el-input>
       </el-form-item>
-      <el-form-item label="密码">
+      <el-form-item label="密码" prop="password">
         <el-input v-model="formLabelAlign.password" type="password"></el-input>
       </el-form-item>
       <el-form-item label="角色">
