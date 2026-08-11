@@ -4,6 +4,8 @@ import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import UserManage from '@/views/UserManage.vue'
 import UserCenter from '@/views/UserCenter.vue'
+import { useUserStore } from '@/store/useLoginUserStore'
+import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,19 +40,25 @@ const router = createRouter({
       component: UserCenter,
       meta: { title: '个人中心', requestUser: true }
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: NotFound,
+      meta: { title: '404 Not Found' }
+    },
   ],
 })
 
-router.beforeEach((to, from) => {
-  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null')
+router.beforeEach((to, from, next) => {
+  const store = useUserStore()
   if (to.meta.requestAdmin) {
-    if (userInfo && userInfo.role == 'admin') {
+    if (store.isLoggedIn && store.userInfo?.role == 'admin') {
       return true
     } else {
       return '/'
     }
   } else if (to.meta.requestUser) {
-    if (userInfo) {
+    if (store.userInfo) {
       return true
     } else {
       return '/'

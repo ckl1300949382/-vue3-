@@ -1,6 +1,6 @@
 
 
-//防抖函数 多次点击下执行最后一次
+//防抖函数 多次点击下执行最后一次点击
 export function useDebounce(fn, delay = 500) {
     let timer = null
     return function (...args) {

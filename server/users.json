@@ -1,0 +1,145 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "$2b$10$QPy9iQLZ0lh5Xq.Atfhf.ee3gILPbbd4xjDlJL9jnDMtHi.bkXnJC",
+      "email": "admin@example.com",
+      "name": "管理员",
+      "role": "admin",
+      "createdAt": "2024-01-01 10:00:00",
+      "status": 1
+    },
+    {
+      "id": 2,
+      "username": "user1",
+      "password": "$2b$10$dveq7Wi1DRHZXjG9XI.toePtrxrV6/5OaX3te7M7IRMmDDE/UDKWW",
+      "email": "user1@example.com",
+      "name": "张三",
+      "role": "user",
+      "createdAt": "2024-01-02 14:30:00",
+      "status": 1
+    },
+    {
+      "id": 3,
+      "username": "user2",
+      "password": "$2b$10$cUhajijX/zQsPDKsd0G67u4EgabkYLMt3OhvlrUmmPVUowDXqO7Zi",
+      "email": "user2@example.com",
+      "name": "李四",
+      "role": "user",
+      "createdAt": "2024-01-03 09:15:00",
+      "status": 1
+    },
+    {
+      "id": 4,
+      "username": "user3",
+      "password": "$2b$10$1gOphbmxlLBg7dIo8O/0guoexbiwlAfs/SdaYOM7yXm6HGEZqI/By",
+      "email": "user3@example.com",
+      "name": "王五",
+      "role": "user",
+      "createdAt": "2024-01-04 16:45:00",
+      "status": 0
+    },
+    {
+      "id": 5,
+      "username": "user4",
+      "password": "$2b$10$kaNEoDS2WhqYBq7Hpdc9xeFyV2O9b/T/HPLREKInapfWl.uVJUgIW",
+      "email": "user4@example.com",
+      "name": "赵六",
+      "role": "user",
+      "createdAt": "2024-01-05 11:20:00",
+      "status": 1
+    },
+    {
+      "id": 6,
+      "username": "user5",
+      "password": "$2b$10$UgqAZfckFG8eMXpN.HbY5.yf.c2pjekc4RTOXreAAf92LBaqaHIHG",
+      "email": "user5@example.com",
+      "name": "孙七",
+      "role": "user",
+      "createdAt": "2024-01-06 13:30:00",
+      "status": 1
+    },
+    {
+      "id": 7,
+      "username": "user6",
+      "password": "$2b$10$I6VWoPykl/KqchDMZzTSR.Wdj4h10NqmlsMmdbHR5lRZ5DrYQvqJG",
+      "email": "user6@example.com",
+      "name": "周八",
+      "role": "user",
+      "createdAt": "2024-01-07 10:45:00",
+      "status": 1
+    },
+    {
+      "id": 8,
+      "username": "user7",
+      "password": "$2b$10$zPoxQNOLYlRgySCzMtY1Z.C.1aA/2BRnqVANp98TPqucXr2ZOjSnW",
+      "email": "user7@example.com",
+      "name": "吴九",
+      "role": "user",
+      "createdAt": "2024-01-08 15:20:00",
+      "status": 0
+    },
+    {
+      "id": 9,
+      "username": "user8",
+      "password": "$2b$10$P5uNp7gwddyI3UfyX2aKrOBZrMna7rjhIANhhYJ3nSTV3M65LeQCi",
+      "email": "user8@example.com",
+      "name": "郑十",
+      "role": "user",
+      "createdAt": "2024-01-09 09:00:00",
+      "status": 1
+    },
+    {
+      "id": 10,
+      "username": "user9",
+      "password": "$2b$10$af0/CTio7ICpf9pmktR2/Once2Tu4m5bdB5kxDALtpNuquiLc/MsW",
+      "email": "user9@example.com",
+      "name": "陈十一",
+      "role": "user",
+      "createdAt": "2024-01-10 11:30:00",
+      "status": 1
+    },
+    {
+      "id": 11,
+      "username": "user10",
+      "password": "$2b$10$I7ZRoDYUb1qrZT81m0RkM.VexAml23Okt8QQ63GDIG27b2Q9DJF8u",
+      "email": "user10@example.com",
+      "name": "黄十二",
+      "role": "user",
+      "createdAt": "2024-01-11 14:00:00",
+      "status": 1
+    },
+    {
+      "id": 12,
+      "username": "user11",
+      "password": "$2b$10$GgLOjVUkU76eJXwQn0pkKOWjM9izV3F6KKY6E9HVJm8j8qb/KBUTe",
+      "email": "user11@example.com",
+      "name": "林十三",
+      "role": "user",
+      "createdAt": "2024-01-12 16:30:00",
+      "status": 0
+    },
+    {
+      "id": 13,
+      "username": "user12",
+      "password": "$2b$10$2V0/Xt/KtGW34m6xFsJlUesArAKmlZrTvBQ/pgbUu/JUc9lmcydya",
+      "email": "user12@example.com",
+      "name": "何十四",
+      "role": "user",
+      "createdAt": "2024-01-13 10:15:00",
+      "status": 1
+    },
+    {
+      "id": 14,
+      "username": "user13",
+      "password": "$2b$10$KFepXlzEsVCNb3C42xOwNOOFjmFuj8rmPyVTk22Ez3wbhTlooGixa",
+      "email": "user13@example.com",
+      "name": "马十五",
+      "role": "user",
+      "createdAt": "2024-01-14 13:45:00",
+      "status": 1
+    }
+  ],
+  "nextUserId": 16
+}

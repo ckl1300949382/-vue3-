@@ -5,6 +5,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
 import { usePage } from '@/composable/usePage'
 import { useDebounce } from '@/composable/useDebounce'
+import { useUserStore } from '@/store/useLoginUserStore'
+
 
 
 const manageDataList = ref([])
@@ -125,15 +127,29 @@ const handleSubmit = async () => {
 
 //删除用户
 const handleDelete = async (id) => {
-  await ElMessageBox.confirm('确认删除,该用户？', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-  const res = await deleteUser(id)
-  if (res.code === 200) {
-    ElMessage.success('删除')
-    getManageData()
+  const shore = useUserStore()
+  if (shore.userInfo.id === id) {
+    ElMessage.error('不能删除自己')
+    return
+  }
+  try {
+    await ElMessageBox.confirm('确认删除，该用户？', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    const res = await deleteUser(id)
+    if (res.code === 200) {
+      ElMessage.success('删除成功')
+      getManageData()
+    } else {
+      ElMessage.error(res.message || '删除失败')
+    }
+  } catch (err) {
+    if (err === 'cancel' || err === 'close') {
+      return
+    }
+    ElMessage.error(err?.message || '删除失败，请稍后重试')
   }
 }
 

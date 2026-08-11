@@ -18,7 +18,15 @@
       "WebSearch",
       "Bash(python3 -c \"import docx; print\\('python-docx OK'\\)\")",
       "Bash(/c/Users/lin/AppData/Local/Programs/Python/Python312/python *)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "Read(//c/Users/lin/Desktop/Claude/学习代码/vue/**)",
+      "Read(//c/Users/lin/Desktop/Claude/学习代码/**)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\(process.env.USERPROFILE + '/.claude.json','utf8'\\)\\); console.log\\('~/.claude.json: valid JSON'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\(process.env.USERPROFILE + '/.claude/settings.json','utf8'\\)\\); console.log\\('settings.json: valid JSON'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\(process.cwd\\(\\) + '/.claude/settings.local.json','utf8'\\)\\); console.log\\('project settings.local.json: valid JSON'\\)\")",
+      "Bash(npm install *)",
+      "Bash(node -e \"const express=require\\('express'\\);const jwt=require\\('jsonwebtoken'\\);const bcrypt=require\\('bcryptjs'\\);console.log\\('依赖检查通过:', 'express', express\\(\\).get\\('env'\\), '| jwt ok | bcryptjs ok'\\)\")",
+      "Bash(git -C .. status --short)"
     ]
   }
 }
