@@ -49,10 +49,10 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const store = useUserStore()
   if (to.meta.requestAdmin) {
-    if (store.isLoggedIn && store.userInfo?.role == 'admin') {
+    if (store.isLoggedIn && store.userInfo?.role === 'admin') {
       return true
     } else {
       return '/'
