@@ -22,7 +22,7 @@
 
 - **Pinia** — 从 `vue` 中引入 `defineStore`，在 `src/store/` 下创建 `useLoginUserStore.js`，用来管理登录状态、token、用户信息
 - **Element Plus** — 在 `main.js` 中全局导入 Element Plus 和样式文件
-- **后端请求封装** — 在 `src/reques.ts` 中使用 `axios.create()` 创建一个实例，设置好 baseURL 为 `http://localhost:3001`，并配置请求拦截器和响应拦截器
+- **后端请求封装** — 在 `src/request.ts` 中使用 `axios.create()` 创建一个实例，设置好 baseURL 为 `http://localhost:3001`，并配置请求拦截器和响应拦截器
 - **路由设置** — 在 `src/router/index.js` 中配置了 4 个路由：首页 `/`、用户登录 `/user/login`、用户注册 `/user/register`、用户管理 `/user/userManage`
 
 ---
@@ -43,7 +43,7 @@
 4. 绑定登录按钮的点击事件 `handleLogin`。首先判断用户名和密码是否为空，如果为空则使用 Element Plus 的 `ElMessage.error` 弹出提示，然后 `return` 终止
 5. 验证通过后调用 `const res = await userLogin({username, password})` 将数据传到后端
 6. 判断 `res.data.code === 200`：
-   - 成功 → `ElMessage.success('登录成功')` → 调用 `userStore.login(res.data.data.token, res.data.data.user)` 将 token 和用户信息保存到 localStorage → `router.push('/')` 跳转回首页
+   - 成功 → `ElMessage.success('登录成功')` → 调用 `userStore.login(res.data.token, res.data.user)` 将 token 和用户信息保存到 localStorage → `router.push('/')` 跳转回首页
    - 失败 → 区分两种情况："用户名或密码错误"（后端返回 401）和"网络请求错误"（网络不通等）
 
 功能：

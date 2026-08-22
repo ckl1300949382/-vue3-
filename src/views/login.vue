@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/useLoginUserStore'
 import { userLogin } from '@/api/user'
@@ -56,12 +56,10 @@ const handleLogin = async () => {
       ElMessage.success('登录成功')
       userStore.login(res.data.token, res.data.user)
       router.push('/')
-    } else {
-      ElMessage.error(res.message || '登录失败')
-      nextTick(() => formRef.value?.clearValidate())
     }
   } catch (error) {
-    ElMessage.error('登录失败，请检查网络')
+    // 登录失败的具体原因（密码错误、账号被禁用、网络异常等）
+    // 已由 request.ts 全局拦截器统一弹出提示，这里不需要重复弹窗
   } finally {
     loading.value = false
   }

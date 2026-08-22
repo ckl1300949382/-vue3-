@@ -5,6 +5,7 @@ import Register from '@/views/Register.vue'
 import UserManage from '@/views/UserManage.vue'
 import UserCenter from '@/views/UserCenter.vue'
 import { useUserStore } from '@/store/useLoginUserStore'
+import { ElMessage } from 'element-plus'
 import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
@@ -20,13 +21,13 @@ const router = createRouter({
       path: '/user/login',
       name: 'userLogin',
       component: Login,
-      meta: { title: '登录' }
+      meta: { title: '登录', requestGuest: true }
     },
     {
       path: '/user/register',
       name: 'userRegister',
       component: Register,
-      meta: { title: '注册' }
+      meta: { title: '注册', requestRegister: true }
     },
     {
       path: '/user/userManage',
@@ -51,18 +52,35 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const store = useUserStore()
+  //拦截用户登录
+  if (to.meta.requestGuest) {
+    if (store.isLoggedIn) {
+      ElMessage.warning('你已登录')
+      return '/'
+    }
+    return true
+  }
+  //拦截用户注册
+  if (to.meta.requestRegister) {
+    if (store.isLoggedIn) {
+      ElMessage.warning('你都登录了还来干嘛')
+      return '/'
+    }
+    return true
+  }
+  //拦截普通用户进入管理界面
   if (to.meta.requestAdmin) {
     if (store.isLoggedIn && store.userInfo?.role === 'admin') {
       return true
-    } else {
-      return '/'
     }
+    ElMessage.warning('该页面需要管理员权限')
+    return '/'
   } else if (to.meta.requestUser) {
     if (store.userInfo) {
       return true
-    } else {
-      return '/'
     }
+    ElMessage.warning('请先登录后再访问')
+    return '/'
   } else {
     return true
   }

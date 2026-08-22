@@ -139,7 +139,27 @@
       "role": "user",
       "createdAt": "2024-01-14 13:45:00",
       "status": 1
+    },
+    {
+      "id": 16,
+      "username": "蛤蟆王",
+      "password": "$2b$10$zbZ.0cOPF6s.S0yusxSXre2U3VP6Q6g/SgJAtDvwVP1GkORd017y6",
+      "email": "1300949382@qq.com",
+      "name": "程大雷",
+      "role": "user",
+      "createdAt": "2026/8/22 22:58:17",
+      "status": 1
+    },
+    {
+      "id": 17,
+      "username": "123456",
+      "password": "$2b$10$U3iaBzVvT.hyiKLOY/pseeRe0t8HJfhFpeDJ4melsnTbnHwgcqOHW",
+      "email": "1300949383@qq.com",
+      "name": "123456",
+      "role": "user",
+      "createdAt": "2026/8/22 23:07:23",
+      "status": 1
     }
   ],
-  "nextUserId": 16
+  "nextUserId": 18
 }

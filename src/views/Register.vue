@@ -9,6 +9,8 @@ import AuthLayout from '@/components/AuthLayout.vue'
 
 const router = useRouter()
 
+const loading = ref(false)
+
 const registerForm = ref({
   username: '',
   password: '',
@@ -18,6 +20,7 @@ const registerForm = ref({
 })
 
 const handleRegister = async () => {
+  if (loading.value) return
   const { username, password, confirmPassword, email, name } = registerForm.value
 
   if (!username) { ElMessage.error('请输入用户名'); return }
@@ -35,15 +38,21 @@ const handleRegister = async () => {
   if (!name) { ElMessage.error('请输入姓名'); return }
   if (name.length < 2) { ElMessage.error('姓名至少2个字符'); return }
 
-  const res = await userRegister({
-    username, password, email, name
-  })
+  loading.value = true
+  try {
+    const res = await userRegister({
+      username, password, email, name
+    })
 
-  if (res.code === 200) {
-    ElMessage.success('注册成功')
-    router.push('/user/login')
-  } else {
-    ElMessage.error(res.message || '注册失败')
+    if (res.code === 200) {
+      ElMessage.success('注册成功')
+      router.push('/user/login')
+    }
+  } catch (err) {
+    // 注册失败的具体原因（用户名/邮箱已存在、网络异常等）
+    // 已由 request.ts 全局拦截器统一弹出提示，这里不需要重复弹窗
+  } finally {
+    loading.value = false
   }
 }
 
@@ -107,11 +116,11 @@ const handleConfirmPasswordInput = (val) => {
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" class="submit-btn" @click="handleRegister">注册</el-button>
+        <el-button type="primary" class="submit-btn" :loading="loading" @click="handleRegister">注册</el-button>
       </el-form-item>
 
       <div class="form-links">
-        <el-link type="primary" href="/user/login">已有账号？去登录</el-link>
+        <el-link type="primary" @click="router.push('/user/login')">已有账号？去登录</el-link>
       </div>
     </el-form>
   </AuthLayout>

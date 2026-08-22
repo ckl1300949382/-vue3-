@@ -31,20 +31,22 @@ onMounted(() => {
 })
 
 const handleSubmit = async () => {
-  const userStore = useUserStore()
-  const res = await updateUser(userStore.userInfo?.id, {
-    name: FormLabelAlign.value.name,
-    email: FormLabelAlign.value.email,
-  })
-
-  if (res.code === 200) {
-    ElMessage.success('修改成功')
-    userStore.updateUserInfo({
+  try {
+    const userStore = useUserStore()
+    const res = await updateUser(userStore.userInfo?.id, {
       name: FormLabelAlign.value.name,
-      email: FormLabelAlign.value.email
+      email: FormLabelAlign.value.email,
     })
-  } else {
-    ElMessage.error(res.message || '修改失败')
+
+    if (res.code === 200) {
+      ElMessage.success('修改成功')
+      userStore.updateUserInfo({
+        name: FormLabelAlign.value.name,
+        email: FormLabelAlign.value.email
+      })
+    }
+  } catch (err) {
+    // 保存失败的原因（登录过期、网络异常等）已由全局拦截器统一弹出提示
   }
 }
 
@@ -100,7 +102,7 @@ const submitForm = async () => {
       }
     }
   } catch (err) {
-    ElMessage.error(err?.message || '修改失败')
+    // 修改失败的具体原因（旧密码错误、网络异常等）已由全局拦截器统一弹出提示
   }
 }
 const resetForm = (formName) => {
@@ -115,7 +117,7 @@ const resetForm = (formName) => {
 
 <template>
   <el-dialog title="修改密码" v-model="dialogVisible" width="400px">
-    <el-form status-icon :model="passwordForm" label-width="100px" class="demo-ruleForm">
+    <el-form status-icon :model="passwordForm" label-width="100px" class="demo-ruleForm" @submit.prevent="submitForm">
       <el-form-item label="旧密码" prop="oldPassword">
         <el-input type="password" v-model="passwordForm.oldPassword" autocomplete="off"></el-input>
       </el-form-item>

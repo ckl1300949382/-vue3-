@@ -82,18 +82,18 @@ onMounted(() => {
       <div class="panel">
         <div class="panel-header">📌 快捷入口</div>
         <div class="panel-body shortcuts">
-          <a class="shortcut" href="/user/userManage">
+          <router-link class="shortcut" to="/user/userManage">
             <span class="shortcut-icon">👥</span>
             <span class="shortcut-text">用户管理</span>
-          </a>
-          <a class="shortcut" href="/user/login">
+          </router-link>
+          <router-link class="shortcut" to="/user/login">
             <span class="shortcut-icon">🔑</span>
             <span class="shortcut-text">用户登录</span>
-          </a>
-          <a class="shortcut" href="/user/register">
+          </router-link>
+          <router-link class="shortcut" to="/user/register">
             <span class="shortcut-icon">📝</span>
             <span class="shortcut-text">用户注册</span>
-          </a>
+          </router-link>
         </div>
       </div>
 

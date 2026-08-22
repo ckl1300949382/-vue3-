@@ -12,11 +12,11 @@ const isEditMode = ref(false)
 const rules = computed(() => (
   {
     username: [
-      { require: true, message: '请输入用户名', trigger: 'blur' },
+      { required: true, message: '请输入用户名', trigger: 'blur' },
       { min: 3, max: 20, message: '用户名长度 3-20 个字符', trigger: 'blur' }
     ],
     name: [
-      { require: true, message: "请输入姓名", trigger: 'blur' }
+      { required: true, message: "请输入姓名", trigger: 'blur' }
     ],
     email: [
       { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -133,7 +133,7 @@ const handleSubmit = async () => {
     }
     nextTick(() => formRef.value?.clearValidate())
   } catch (err) {
-    ElMessage.error(err?.message || '提交失败')
+    // 提交失败的具体原因（用户名/邮箱已存在等）已由全局拦截器统一弹出，这里不需要重复弹窗
   }
 }
 
@@ -161,15 +161,18 @@ const handleDelete = async (id) => {
     if (err === 'cancel' || err === 'close') {
       return
     }
-    ElMessage.error(err?.message || '删除失败，请稍后重试')
+    // 其他删除失败原因已由全局拦截器统一弹出提示
   }
 }
 
 //搜索
-const handleSearch = useDebounce(() => {
+const doSearch = () => {
+  // 弹窗打开时按 Enter 不应触发列表搜索（弹窗内的 Enter 用于提交表单）
+  if (dialogVisible.value) return
   resetPage()
   getManageData()
-})
+}
+const handleSearch = useDebounce(doSearch)
 const handleCurrentChange = (e) => {
   onPageChange(e)
   getManageData()
@@ -185,7 +188,8 @@ useKeyboardSubmit(handleSearch)
 
   <!-- 查找用户的表单 -->
   <el-dialog v-model="dialogVisible" :title="isEditMode ? '编辑用户' : '新增用户'" width="500px">
-    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" ref="formRef" :rules="rules">
+    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" ref="formRef" :rules="rules"
+      @submit.prevent="handleSubmit">
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formLabelAlign.username"></el-input>
       </el-form-item>
