@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
@@ -9,7 +9,9 @@ import { ElMessage } from 'element-plus'
 import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // hash 模式：GitHub Pages 是纯静态托管，不支持 history 模式的服务端路由回退，
+  // 用 hash 模式可以避免刷新/直接访问子路径时 404
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
