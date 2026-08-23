@@ -6,7 +6,7 @@
 
 ## 🚀 在线预览
 
-> 点击下方链接直接查看项目效果（GitHub Pages 自动部署，推送到 main 即自动更新）：
+> 点击下方链接直接查看项目效果（GitHub Pages 自动部署，推送到 master 即自动更新）：
 
 **🔗 https://ckl1300949382.github.io/-vue3-/**
 
