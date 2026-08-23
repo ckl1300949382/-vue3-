@@ -31,7 +31,8 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        # 本地安装即使用 legacy-peer-deps(oxlint 1.74 与 eslint-plugin-oxlint 1.73 peer 冲突),保持行为一致
+        run: npm ci --legacy-peer-deps
 
       - name: Build
         run: npm run build
