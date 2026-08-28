@@ -1,8 +1,7 @@
-import axios from 'axios'
 import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/store/useLoginUserStore'
 import router from '@/router'
-
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -11,24 +10,24 @@ const instance = axios.create({
 });
 
 // 添加请求拦截器
-instance.interceptors.request.use(function (config) {
+instance.interceptors.request.use(function (config: InternalAxiosRequestConfig) {
   const store = useUserStore()
   if (store.token) {
     config.headers.Authorization = `Bearer ${store.token}`
   }
   return config;
-}, function (error) {
+}, function (error: AxiosError) {
   return Promise.reject(error);
 });
 
-instance.interceptors.response.use(function (response) {
+instance.interceptors.response.use(function (response: AxiosResponse) {
   const body = response.data
   if (body.code === 200) {
     return body;
   }
   ElMessage.error(body.message || '请求失败')
   return Promise.reject(body)
-}, function (error) {
+}, function (error: AxiosError) {
   const isAuthRequest = ['/api/login', '/api/register'].includes(error.config?.url)
   if (isAuthRequest) {
     // 登录/注册属于鉴权接口：错误原因必须让用户看到（如"用户名或密码错误"），

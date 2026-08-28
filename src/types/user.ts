@@ -8,6 +8,11 @@ export interface UserVO {
     createdAt: string  // 后端格式化成字符串，如 "2026-08-27 10:30:00"
 }
 
+export interface LoginVO {
+    token: string
+    user: UserVO
+}
+
 // 登录请求 payload
 export interface LoginDTO {
     username: string

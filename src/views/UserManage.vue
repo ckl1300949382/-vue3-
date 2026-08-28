@@ -40,7 +40,7 @@ const labelPosition = ref('right')
 const getManageData = async () => {
   loading.value = true
   try {
-    const res = await manageData(keyword.value, currentPage.value, pageSize.value)
+    const res = await manageData({ keyword: keyword.value, page: currentPage.value, pageSize: pageSize.value })
     manageDataList.value = res.data.list
     total.value = res.data.total
   } catch (err) {
