@@ -2,6 +2,7 @@ import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/store/useLoginUserStore'
 import router from '@/router'
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import type { BizResult } from '@/types/api'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -27,7 +28,7 @@ instance.interceptors.response.use(function (response: AxiosResponse) {
   }
   ElMessage.error(body.message || '请求失败')
   return Promise.reject(body)
-}, function (error: AxiosError) {
+}, function (error: AxiosError<BizResult<null>>) {
   const isAuthRequest = ['/api/login', '/api/register'].includes(error.config?.url)
   if (isAuthRequest) {
     // 登录/注册属于鉴权接口：错误原因必须让用户看到（如"用户名或密码错误"），
