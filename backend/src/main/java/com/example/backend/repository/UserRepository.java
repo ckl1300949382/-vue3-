@@ -47,4 +47,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("SELECT u.role AS name, COUNT(u) AS cnt FROM User u GROUP BY u.role")
     List<Object[]> countGroupByRole();
+
+    /**
+     * 各状态用户数:按 status 分组计数,SELECT 里用 CASE 把数字翻成中文标签
+     * (status: 1=启用, 0=禁用)——中文标签直接在 SQL 里出,Service 只做 VO 翻译
+     * 返回 [name, count] 每行两个值;ORDER BY status DESC 保证"启用"(1)排在"禁用"(0)前
+     */
+    @Query(value = "SELECT CASE WHEN status = 1 THEN '启用' WHEN status = 0 THEN '禁用' ELSE '未知' END AS name, "
+            + "COUNT(*) AS cnt FROM users GROUP BY status ORDER BY status DESC", nativeQuery = true)
+    List<Object[]> countGroupByStatus();
+
+    /**
+     * 近 N 个月每月注册数:按 created_at 的月份分组计数,只统计 start 之后的
+     * 与 countRegisteredByDay 同构,只是粒度从"天"换成"月"(%Y-%m);缺失月份补零由 Service 层做
+     */
+    @Query(value = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS cnt "
+            + "FROM users WHERE created_at >= :start "
+            + "GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month", nativeQuery = true)
+    List<Object[]> countRegisteredByMonth(@Param("start") LocalDateTime start);
 }

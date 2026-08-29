@@ -2,8 +2,10 @@ package com.example.backend.controller;
 
 import com.example.backend.common.Result;
 import com.example.backend.service.StatsService;
+import com.example.backend.vo.RegisterMonthlyVO;
 import com.example.backend.vo.RegisterTrendVO;
 import com.example.backend.vo.RoleDistributionVO;
+import com.example.backend.vo.StatusDistributionVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,5 +38,17 @@ public class StatsController {
     @GetMapping("/role-distribution")
     public Result<List<RoleDistributionVO>> roleDistribution() {
         return Result.ok(statsService.getRoleDistribution());
+    }
+
+    /** 状态分布:GET /api/stats/status-distribution,返回 [{name: 中文, value}](管理看板,仅 admin) */
+    @GetMapping("/status-distribution")
+    public Result<List<StatusDistributionVO>> statusDistribution() {
+        return Result.ok(statsService.getStatusDistribution());
+    }
+
+    /** 月度注册:GET /api/stats/register-monthly?months=12,返回连续 N 个月 [{month, count}](管理看板,仅 admin) */
+    @GetMapping("/register-monthly")
+    public Result<List<RegisterMonthlyVO>> registerMonthly(@RequestParam(defaultValue = "12") int months) {
+        return Result.ok(statsService.getRegisterMonthly(months));
     }
 }
