@@ -1,11 +1,16 @@
 import { ref } from 'vue'
 
-export function usePage({ defaultPage = 1, defaultSize = 10 } = {}) {
+interface PageOption {
+    defaultPage?: number,
+    defaultSize?: number
+}
+
+export function usePage({ defaultPage = 1, defaultSize = 10 }: PageOption = {}) {
     const currentPage = ref(defaultPage)
     const pageSize = ref(defaultSize)
     const total = ref(0)
 
-    function onPageChange(page) {
+    function onPageChange(page: number) {
         currentPage.value = page
     }
 

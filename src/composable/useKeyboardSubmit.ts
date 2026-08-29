@@ -1,8 +1,12 @@
 import { onMounted, onUnmounted } from 'vue'
 //键盘的按键控制提交表单封装
-export function useKeyboardSubmit(callback, { enable = true } = {}) {
+interface KeyboardOptions {
+    enable?: boolean
+}
+
+export function useKeyboardSubmit(callback: () => void, { enable = true }: KeyboardOptions = {}) {
     if (!enable) return
-    const handler = (event) => {
+    const handler = (event: KeyboardEvent) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             callback()
         }
