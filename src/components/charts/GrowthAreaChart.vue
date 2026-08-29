@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import * as echarts from 'echarts'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { getRoleDistribution } from '@/api/stats'
-import type { RoleItem } from '@/types/stats'
-
+import { getRegisterMonthly } from '@/api/stats'
+import type { MonthlyPoint } from '@/types/stats'
 
 const chartRef = ref<HTMLDivElement | null>(null)
 let charts: echarts.ECharts | null = null
 const loadData = async () => {
-    const res = await getRoleDistribution()
+    const res = await getRegisterMonthly()
     if (res.code === 200) {
         renderChart(res.data)
     }
 }
-const renderChart = (list: RoleItem[]) => {
+const renderChart = (list: MonthlyPoint[]) => {
     if (!chartRef.value) return
     charts = echarts.init(chartRef.value)
     charts.setOption({
-        title: { text: '角色分布' },
-        tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
-        legend: { bottom: 0 },
-        series: [{ type: 'pie', radius: '60%', data: list }]
+        title: { text: '近12月注册增长' },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: list.map(n => n.month) },
+        yAxis: { type: 'value', minInterval: 1 },
+        series: [{ type: 'line', data: list.map(n => n.count), smooth: true, areaStyle: {} }]
     })
 }
 const handleResize = () => { charts?.resize() }
@@ -36,7 +36,6 @@ onUnmounted(() => {
     }
 })
 </script>
-
 <template>
     <div ref="chartRef" style="width: 100%; height: 320px"></div>
 </template>

@@ -7,6 +7,7 @@ import UserCenter from '@/views/UserCenter.vue'
 import { useUserStore } from '@/store/useLoginUserStore'
 import { ElMessage } from 'element-plus'
 import NotFound from '@/views/NotFound.vue'
+import Dashboard from '@/views/Dashboard.vue'
 
 const router = createRouter({
   // hash 模式：GitHub Pages 是纯静态托管，不支持 history 模式的服务端路由回退，
@@ -42,6 +43,12 @@ const router = createRouter({
       name: 'userCenter',
       component: UserCenter,
       meta: { title: '个人中心', requestUser: true }
+    },
+    {
+      path: '/user/dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/Dashboard.vue'),
+      meta: { title: '数据看板', requestAdmin: true }
     },
     {
       path: '/:pathMatch(.*)*',

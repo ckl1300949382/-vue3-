@@ -11,3 +11,13 @@ export interface RoleItem {
     name: 'admin' | 'user'
     value: number
 }
+
+export interface StatusItem {
+    name: string,
+    value: number
+}
+
+export interface MonthlyPoint {
+    month: string,
+    count: number
+}

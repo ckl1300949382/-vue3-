@@ -1,28 +1,29 @@
 <script setup lang="ts">
 import * as echarts from 'echarts'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { getRoleDistribution } from '@/api/stats'
-import type { RoleItem } from '@/types/stats'
-
+import { getStatusDistribution } from '@/api/stats'
+import type { StatusItem } from '@/types/stats'
 
 const chartRef = ref<HTMLDivElement | null>(null)
 let charts: echarts.ECharts | null = null
+
 const loadData = async () => {
-    const res = await getRoleDistribution()
+    const res = await getStatusDistribution()
     if (res.code === 200) {
         renderChart(res.data)
     }
 }
-const renderChart = (list: RoleItem[]) => {
+const renderChart = (list: StatusItem[]) => {
     if (!chartRef.value) return
     charts = echarts.init(chartRef.value)
     charts.setOption({
-        title: { text: '角色分布' },
+        title: { text: '用户状态分布' },
         tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
         legend: { bottom: 0 },
-        series: [{ type: 'pie', radius: '60%', data: list }]
+        series: [{ type: 'pie', radius: ['50%', '70%'], data: list }]
     })
 }
+
 const handleResize = () => { charts?.resize() }
 onMounted(() => {
     loadData()
@@ -35,8 +36,8 @@ onUnmounted(() => {
         charts = null
     }
 })
-</script>
 
+</script>
 <template>
     <div ref="chartRef" style="width: 100%; height: 320px"></div>
 </template>
