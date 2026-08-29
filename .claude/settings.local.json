@@ -122,7 +122,10 @@
       "Bash(curl.exe -s -w \"\\\\nHTTP %{http_code}\\\\n\" http://localhost:3001/api/hello)",
       "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -uroot -p123456 user_management -e \"TRUNCATE TABLE users; SELECT COUNT\\(*\\) AS cnt FROM users;\")",
       "Bash(printf *)",
-      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -uroot -p123456 user_management -e \"DELETE FROM users WHERE username IN \\('dbtest','newbie','zhangsan','lisi'\\); SELECT id, username, name FROM users ORDER BY id;\" 2>&1 | grep -v \"Warning\")"
+      "Bash(\"/c/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -uroot -p123456 user_management -e \"DELETE FROM users WHERE username IN \\('dbtest','newbie','zhangsan','lisi'\\); SELECT id, username, name FROM users ORDER BY id;\" 2>&1 | grep -v \"Warning\")",
+      "Bash(wmic process *)",
+      "Bash(taskkill //F //PID 28196)",
+      "Bash(JAVA_HOME=\"C:/Users/lin/AppData/Local/Programs/Eclipse Adoptium/jdk-17.0.20.8-hotspot\" ./mvnw -q compile)"
     ]
   }
 }
