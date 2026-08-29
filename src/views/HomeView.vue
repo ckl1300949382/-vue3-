@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getStats } from '@/api/user'
+import RegisterTrendChart from '@/components/charts/RegisterTrendChart.vue'
+import RolePieChart from '@/components/charts/RolePieChart.vue'
 
 const stats = ref({})
 const loading = ref(false)
@@ -40,7 +42,7 @@ onMounted(() => {
           <span class="hero-tag">Pinia</span>
           <span class="hero-tag">Element Plus</span>
           <span class="hero-tag">Axios</span>
-          <span class="hero-tag">Express</span>
+          <span class="hero-tag">Spring Boot</span>
         </div>
       </div>
     </div>
@@ -77,6 +79,22 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- ===== 数据看板区：左2/3趋势图 + 右1/3饼图 ===== -->
+    <div class="charts">
+      <div class="panel">
+        <div class="panel-header">📈 注册趋势</div>
+        <div class="panel-body">
+          <RegisterTrendChart />
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">🥧 角色分布</div>
+        <div class="panel-body">
+          <RolePieChart />
+        </div>
+      </div>
+    </div>
+
     <!-- ===== 内容区 ===== -->
     <div class="content">
       <div class="panel">
@@ -97,33 +115,10 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">ℹ️ 系统信息</div>
-        <div class="panel-body">
-          <div class="info-row">
-            <span class="info-key">系统名称</span>
-            <span class="info-val">全局管理系统</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">前端版本</span>
-            <span class="info-val">Vue 3 + Element Plus</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">后端版本</span>
-            <span class="info-val">Express</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">运行状态</span>
-            <span class="info-val">
-              <span class="status-dot"></span> 运行中
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
 
-	  </div>
-	</template>
+  </div>
+</template>
 
 <style scoped>
 /* ===== 整体容器 ===== */
@@ -242,9 +237,16 @@ onMounted(() => {
 }
 
 /* ===== 内容面板 ===== */
+.charts {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
 .content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 20px;
   margin-bottom: 40px;
 }
@@ -269,13 +271,21 @@ onMounted(() => {
 }
 
 /* 快捷入口 */
+.quick-panel {
+  margin-bottom: 40px;
+}
+
 .shortcuts {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .shortcut {
+  flex: 1;
+  min-width: 140px;
+  justify-content: center;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -300,39 +310,7 @@ onMounted(() => {
   font-weight: var(--weight-medium);
 }
 
-/* 系统信息 */
-.info-row {
-  display: flex;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-lighter);
-}
 
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-key {
-  width: 90px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.info-val {
-  font-size: 13px;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--success);
-}
 
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
