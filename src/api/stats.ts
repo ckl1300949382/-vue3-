@@ -1,4 +1,3 @@
-// src/api/stats.ts
 import instance from '@/request'
 import type { BizResult } from '@/types/api'
 import type { TrendPoint, RoleItem, StatusItem, MonthlyPoint } from '@/types/stats'

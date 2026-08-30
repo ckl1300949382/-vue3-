@@ -8,7 +8,6 @@ const chartRef = ref<HTMLDivElement | null>(null)
 
 let chart: echarts.ECharts | null = null
 
-// 拉数据（老朋友格式：判断 code 再取货）
 const loadData = async () => {
     const res = await getRegisterTrend()
     if (res.code === 200) {

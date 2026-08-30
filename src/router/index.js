@@ -1,13 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import Login from '@/views/Login.vue'
-import Register from '@/views/Register.vue'
-import UserManage from '@/views/UserManage.vue'
-import UserCenter from '@/views/UserCenter.vue'
 import { useUserStore } from '@/store/useLoginUserStore'
 import { ElMessage } from 'element-plus'
-import NotFound from '@/views/NotFound.vue'
-import Dashboard from '@/views/Dashboard.vue'
 
 const router = createRouter({
   // hash 模式：GitHub Pages 是纯静态托管，不支持 history 模式的服务端路由回退，
@@ -17,31 +10,31 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('@/views/HomeView.vue'),
       meta: { title: '首页' }
     },
     {
       path: '/user/login',
       name: 'userLogin',
-      component: Login,
+      component: () => import('@/views/Login.vue'),
       meta: { title: '登录', requestGuest: true }
     },
     {
       path: '/user/register',
       name: 'userRegister',
-      component: Register,
+      component: () => import('@/views/Register.vue'),
       meta: { title: '注册', requestRegister: true }
     },
     {
       path: '/user/userManage',
       name: 'userManage',
-      component: UserManage,
+      component: () => import('@/views/UserManage.vue'),
       meta: { requestAdmin: true, title: '用户管理' }
     },
     {
       path: '/user/center',
       name: 'userCenter',
-      component: UserCenter,
+      component: () => import('@/views/UserCenter.vue'),
       meta: { title: '个人中心', requestUser: true }
     },
     {
@@ -53,7 +46,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'notFound',
-      component: NotFound,
+      component: () => import('@/views/NotFound.vue'),
       meta: { title: '404 Not Found' }
     },
   ],

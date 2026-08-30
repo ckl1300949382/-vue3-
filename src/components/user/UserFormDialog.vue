@@ -20,9 +20,8 @@ const formLabelAlign = ref<RegisterDTO & UpdateUserDTO>({
 })
 const editId = ref<number | null>(null)
 const isEditMode = computed(() => editId.value !== null)
-const labelPosition = ref('right') // 原文件里弹窗专用,跟着搬
+const labelPosition = ref('right')
 
-// TODO 4: rules 原样搬——computed 依赖 isEditMode(编辑时不要求密码必填)
 const rules = computed(() => (
     {
         username: [
@@ -43,8 +42,6 @@ const rules = computed(() => (
     }
 ))
 
-// ⭐ 核心机关: props.user 变化 → 同步进本地表单
-// 原 handleAdd(清空)/handleEdit(抄行数据)的逻辑,新家在这里
 watch(() => props.user, (val) => {
     if (val) {
         // 编辑模式:有 user → 填表,密码留空(不提交)
@@ -60,11 +57,9 @@ watch(() => props.user, (val) => {
             username: '', name: '', email: '', password: '', role: 'user', status: 1
         }
     }
-    // ⚠️ 坑4: 原 handleAdd/handleEdit 的 clearValidate 搬到这里——每次打开弹窗清掉上次红字
     nextTick(() => formRef.value?.clearValidate())
 })
 
-// TODO 5: handleSubmit 搬家 + 改造——成功只报喜,善后(刷新列表/关窗)归父
 const handleSubmit = async () => {
     try {
         await formRef.value.validate()

@@ -1,5 +1,3 @@
-// src/types/stats.ts
-
 // 注册趋势的单个数据点（契约：{date: "2026-08-01", count: 3}）
 export interface TrendPoint {
     date: string
