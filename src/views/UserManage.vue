@@ -1,180 +1,33 @@
-<script setup>
-import { ref, onMounted, computed, nextTick } from 'vue'
-import { manageData, deleteUser, addUser, updateUser } from '@/api/user'
-import { ElMessage, ElMessageBox } from 'element-plus'
+<script setup lang="ts">
+import { ref } from 'vue'
+import UserFormDialog from '@/components/user/UserFormDialog.vue'
+import UserTable from '@/components/user/UserTable.vue'
+import type { UserVO } from '@/types/user'
 import { useKeyboardSubmit } from '@/composable/useKeyboardSubmit'
-import { usePage } from '@/composable/usePage'
-import { useDebounce } from '@/composable/useDebounce'
-import { useUserStore } from '@/store/useLoginUserStore'
+import { useUserManage } from '@/composable/useUserManage'
 
-const formRef = ref(null)
-const isEditMode = ref(false)
-const rules = computed(() => (
-  {
-    username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' },
-      { min: 3, max: 20, message: '用户名长度 3-20 个字符', trigger: 'blur' }
-    ],
-    name: [
-      { required: true, message: "请输入姓名", trigger: 'blur' }
-    ],
-    email: [
-      { required: true, message: '请输入邮箱', trigger: 'blur' },
-      { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
-    ],
-    password: isEditMode.value ? [] : [
-      { required: true, message: '请输入密码', trigger: 'blur' },
-      { min: 6, max: 20, message: '密码长度 6-20 个字符', trigger: 'blur' }
-    ]
-  }
-))
+const {
+  manageDataList, keyword, loading,
+  currentPage, pageSize, total, dialogVisible,
+  handleSearch, handleCurrentChange, handleDelete, getManageData
+} = useUserManage()
 
-const manageDataList = ref([])
-const keyword = ref('')
-const { currentPage, pageSize, total, onPageChange, resetPage } = usePage()
+// —— 新增状态:正在编辑的用户(null = 新增模式)——
+const editingUser = ref<UserVO | null>(null)
 
-const loading = ref(false)
-const labelPosition = ref('right')
-
-//分页查询用户列表
-const getManageData = async () => {
-  loading.value = true
-  try {
-    const res = await manageData({ keyword: keyword.value, page: currentPage.value, pageSize: pageSize.value })
-    manageDataList.value = res.data.list
-    total.value = res.data.total
-  } catch (err) {
-    console.error('获取用户列表失败', err);
-    ElMessage.error('获取用户列表失败，请稍后重试')
-  } finally {
-    loading.value = false
-  }
-}
-onMounted(() => { getManageData() })
-
-
-
-// 增加用户
-//通用表单
-const formLabelAlign = ref({
-  username: '',
-  name: '',
-  email: '',
-  password: '',
-  role: 'user',
-  status: 1
-})
-const editId = ref(null)
-const dialogVisible = ref(false)
+// 开弹窗:新增 = 置 null;编辑 = 抄行数据
 const handleAdd = () => {
-  isEditMode.value = false
+  editingUser.value = null
   dialogVisible.value = true
-  editId.value = null
-  formLabelAlign.value = {       // 清空表单
-    username: '',
-    name: '',
-    email: '',
-    password: '',
-    role: 'user',
-    status: 1
-  }
-  nextTick(() => formRef.value?.clearValidate())
 }
-//编辑用户
-const handleEdit = (row) => {
-  isEditMode.value = true
-  editId.value = row.id
-  formLabelAlign.value = {
-    username: row.username,
-    name: row.name,
-    email: row.email,
-    password: '',
-    role: row.role,
-    status: row.status
-  }
+const handleEdit = (row: UserVO) => {
+  editingUser.value = row
   dialogVisible.value = true
-  nextTick(() => formRef.value?.clearValidate())
-}
-const handleSubmit = async () => {
-  try {
-    await formRef.value.validate()
-  } catch {
-    return
-  }
-  try {
-    let res
-    if (isEditMode.value) {
-      res = await updateUser(editId.value, {
-        name: formLabelAlign.value.name,
-        email: formLabelAlign.value.email,
-        role: formLabelAlign.value.role,
-        status: formLabelAlign.value.status
-      })
-    } else {
-      res = await addUser({
-        username: formLabelAlign.value.username,
-        name: formLabelAlign.value.name,
-        email: formLabelAlign.value.email,
-        password: formLabelAlign.value.password
-      })
-    }
-    if (res.code === 200) {
-      ElMessage.success(isEditMode.value ? '更新成功' : '添加成功')
-      getManageData()
-      dialogVisible.value = false
-      formLabelAlign.value = {
-        username: '',
-        name: '',
-        email: '',
-        password: '',
-        role: 'user',
-        status: 1,
-      }
-    }
-    nextTick(() => formRef.value?.clearValidate())
-  } catch (err) {
-    // 提交失败的具体原因（用户名/邮箱已存在等）已由全局拦截器统一弹出，这里不需要重复弹窗
-  }
 }
 
-//删除用户
-const handleDelete = async (id) => {
-  const store = useUserStore()
-  if (store.userInfo?.id === id) {
-    ElMessage.error('不能删除自己')
-    return
-  }
-  try {
-    await ElMessageBox.confirm('确认删除，该用户？', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
-    const res = await deleteUser(id)
-    if (res.code === 200) {
-      ElMessage.success('删除成功')
-      getManageData()
-    } else {
-      ElMessage.error(res.message || '删除失败')
-    }
-  } catch (err) {
-    if (err === 'cancel' || err === 'close') {
-      return
-    }
-    // 其他删除失败原因已由全局拦截器统一弹出提示
-  }
-}
-
-//搜索
-const doSearch = () => {
-  // 弹窗打开时按 Enter 不应触发列表搜索（弹窗内的 Enter 用于提交表单）
-  if (dialogVisible.value) return
-  resetPage()
-  getManageData()
-}
-const handleSearch = useDebounce(doSearch)
-const handleCurrentChange = (e) => {
-  onPageChange(e)
+// 弹窗提交成功:关窗 + 刷新列表(刷新是父的职责)
+const handleSuccess = () => {
+  dialogVisible.value = false
   getManageData()
 }
 
@@ -186,40 +39,8 @@ useKeyboardSubmit(handleSearch)
 
 <template>
 
-  <!-- 查找用户的表单 -->
-  <el-dialog v-model="dialogVisible" :title="isEditMode ? '编辑用户' : '新增用户'" width="500px">
-    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" ref="formRef" :rules="rules"
-      @submit.prevent="handleSubmit">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="formLabelAlign.username"></el-input>
-      </el-form-item>
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="formLabelAlign.name"></el-input>
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="formLabelAlign.email"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input v-model="formLabelAlign.password" type="password"></el-input>
-      </el-form-item>
-      <el-form-item label="角色">
-        <el-select v-model="formLabelAlign.role">
-          <el-option label="管理员" value="admin" />
-          <el-option label="普通用户" value="user" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="formLabelAlign.status">
-          <el-option label="正常" :value="1" />
-          <el-option label="禁用" :value="0" />
-        </el-select>
-      </el-form-item>
-      <el-form-item size="large">
-        <el-button type="primary" @click="handleSubmit">提交</el-button>
-        <el-button @click="dialogVisible = false">取消</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <UserFormDialog :visible="dialogVisible" :user="editingUser" @close="dialogVisible = false"
+    @success="handleSuccess" />
 
 
 
@@ -242,44 +63,8 @@ useKeyboardSubmit(handleSearch)
       </div>
     </div>
 
-    <!-- 用户表格 -->
-    <el-table :data="manageDataList" border stripe style="width: 100%" v-loading="loading">
-      <el-table-column prop="id" label="ID" width="60" align="center" />
-      <el-table-column prop="username" label="用户名" width="100" />
-      <el-table-column prop="name" label="姓名" width="100" />
-      <el-table-column prop="email" label="邮箱" min-width="180" />
-
-      <!-- 角色列：用 el-tag 显示 -->
-      <el-table-column prop="role" label="角色" width="100" align="center">
-        <template #default="{ row }">
-          <el-tag :type="row.role === 'admin' ? 'danger' : 'primary'" effect="plain">
-            {{ row.role === 'admin' ? '管理员' : '普通用户' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <!-- 状态列：用 el-tag 显示 -->
-      <el-table-column prop="status" label="状态" width="80" align="center">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'info'" effect="plain" size="small">
-            {{ row.status === 1 ? '正常' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="createdAt" label="注册时间" width="180" />
-
-      <!-- 操作列 -->
-      <el-table-column label="操作" width="160" align="center">
-        <template #default="{ row }">
-          <el-button size="small" type="primary" plain @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" plain @click="handleDelete(row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination background layout="prev, pager, next" :total="total" :current-page="currentPage"
-      :page-size="pageSize" @current-change="handleCurrentChange">
-    </el-pagination>
+    <UserTable :list="manageDataList" :total="total" :current-page="currentPage" :page-size="pageSize"
+      :loading="loading" @edit="handleEdit" @delete="handleDelete" @page-change="handleCurrentChange" />
   </div>
 </template>
 
