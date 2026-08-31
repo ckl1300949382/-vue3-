@@ -90,7 +90,8 @@ const handleSubmit = async () => {
             emit('success')
         }
     } catch (err) {
-
+        // 提交失败的具体原因（用户名重复、网络异常等）已由 request.ts 全局拦截器统一弹出提示
+        ElMessage.error(isEditMode.value ? '更新失败，请重试' : '添加失败，请重试')
     }
 }
 </script>

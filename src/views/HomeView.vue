@@ -2,13 +2,19 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getStats } from '@/api/user'
+import { useUserStore } from '@/store/useLoginUserStore'
 import RegisterTrendChart from '@/components/charts/RegisterTrendChart.vue'
 import RolePieChart from '@/components/charts/RolePieChart.vue'
+
+const userStore = useUserStore()
 
 const stats = ref({})
 const loading = ref(false)
 
 const getdata = async () => {
+  // 卫语句：未登录不发统计请求。接口需要 token，未登录必 401，
+  // 拦截器会弹"登录过期"并把游客踹到登录页——不是想要的体验
+  if (!userStore.token) return
   loading.value = true
   try {
     const res = await getStats()
@@ -84,13 +90,14 @@ onMounted(() => {
       <div class="panel">
         <div class="panel-header">📈 注册趋势</div>
         <div class="panel-body">
-          <RegisterTrendChart />
+          <!-- v-if：未登录不挂载图表组件，组件内 onMounted 的请求自然不会发出 -->
+          <RegisterTrendChart v-if="userStore.isLoggedIn" />
         </div>
       </div>
       <div class="panel">
         <div class="panel-header">🥧 角色分布</div>
         <div class="panel-body">
-          <RolePieChart />
+          <RolePieChart v-if="userStore.isLoggedIn" />
         </div>
       </div>
     </div>
