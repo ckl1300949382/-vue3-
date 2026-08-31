@@ -3,12 +3,20 @@ import { useUserStore } from '@/store/useLoginUserStore'
 import router from '@/router'
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import type { BizResult } from '@/types/api'
+import { demoAdapter } from '@/mock/mockServer'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' }
 });
+
+// 线上演示模式：GitHub Pages 只能托管静态前端，访客浏览器连不到后端服务。
+// 生产构建（npm run build）时替换 adapter，请求不出网，由内置 mock 数据驱动完整交互；
+// 本地开发（npm run dev）不受影响，仍连接真实后端。
+if (import.meta.env.PROD) {
+  instance.defaults.adapter = demoAdapter
+}
 
 // 401 去重标志：token 过期时页面常并发多个请求，会同时收到多个 401。
 // 模块级变量全局共享（request.ts 只被 import 一次），给无记忆的拦截器加上"记忆"：

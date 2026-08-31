@@ -11,6 +11,9 @@ import AuthLayout from '@/components/AuthLayout.vue'
 const router = useRouter()
 const userStore = useUserStore()
 
+// 线上演示模式（生产构建）下展示演示账号，方便访客体验
+const isDemo = import.meta.env.PROD
+
 const loginForm = ref({
   username: '',
   password: ''
@@ -92,6 +95,10 @@ useKeyboardSubmit(handleLogin)
       <div class="form-links">
         <el-link type="primary" @click="router.push('/user/register')">还没有账号？去注册</el-link>
       </div>
+
+      <div class="demo-tip" v-if="isDemo">
+        演示账号：admin / 123456（线上为演示模式，数据仅保存在你的浏览器中）
+      </div>
     </el-form>
   </AuthLayout>
 </template>
@@ -116,5 +123,12 @@ useKeyboardSubmit(handleLogin)
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 8px;
+}
+
+.demo-tip {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 12px;
 }
 </style>
